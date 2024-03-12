@@ -93,7 +93,7 @@ function LoginForm() {
                             in
                         </button>
                         <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                            Don’t have an account yet? <a>Contact with Mr. Sefa AKDAŞ</a>
+                            Don’t have an account yet? <a>Contact with your admin</a>
                         </p>
 
                         {error && <p className="text-sm font-medium text-red-500 dark:text-red-400">
