@@ -71,6 +71,20 @@ function CreateButton() {
     </button>)
 }
 
+function filterIssues(issues, search) {
+    return issues.filter(issue => {
+        const searchWords = search.split(" ");
+        for (let searchWord of searchWords) {
+            const titleWords = issue.title.split(" ");
+            for (let titleWord of titleWords) {
+                if (titleWord.toLowerCase().includes(searchWord.toLowerCase()))
+                    return true;
+            }
+        }
+        return false;
+    });
+}
+
 export function SearchBar({fetchedIssues, setIssues, setPage}) {
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -82,7 +96,7 @@ export function SearchBar({fetchedIssues, setIssues, setPage}) {
             setIssues(fetchedIssues);
             return;
         }
-        const filteredIssues = fetchedIssues.filter(issue => issue.title.includes(value));
+        const filteredIssues = filterIssues(fetchedIssues, value);
         setIssues(filteredIssues);
         setPage(1);
     }
