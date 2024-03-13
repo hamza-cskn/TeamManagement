@@ -63,4 +63,10 @@ public class Issue
         Comments = comments;
         Assignees = assignees;
     }
+    
+    public class IssueId : ModelId
+    {
+        public IssueId(Guid id) : base(id)
+        {}
+    }
 }
