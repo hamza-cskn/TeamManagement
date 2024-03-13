@@ -13,9 +13,10 @@ public class IssueController : ControllerBase
     private readonly IssueRepository _repository;
     private readonly IssueCommentRepository _commentRepository;
 
-    public IssueController(IssueRepository repository)
+    public IssueController(IssueRepository repository, IssueCommentRepository commentRepository)
     {
         _repository = repository;
+        _commentRepository = commentRepository;
     }
 
     [Authorize]
@@ -59,5 +60,21 @@ public class IssueController : ControllerBase
     {
         _repository.Update(issue);
         return Ok(new{message="Issue successfully updated."});
+    }
+    
+    [Authorize]
+    [HttpDelete("{id}")]
+    public IActionResult DeleteIssue(string id)
+    {
+        if (!Guid.TryParse(id, out Guid guid))
+            return BadRequest(new { message = "Requested url does not represent a valid GUID: " + id });
+        
+        Issue.Issue.IssueId issueId = new(guid);
+        if (!_repository.Exists(issueId))
+            return BadRequest(new {message="Issue with id " + id + " does not exist."});
+        
+        _repository.Delete(issueId);
+        _commentRepository.Delete(issueId);
+        return Ok(new{message="Issue successfully deleted."});
     }
 }
