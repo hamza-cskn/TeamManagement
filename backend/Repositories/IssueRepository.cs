@@ -54,9 +54,9 @@ public class IssueRepository : Repository<Issue.Issue>
         return Collection.FindSync(issue => true).ToList();
     }
 
-    public override void Delete(Issue.Issue obj)
+    public override void Delete(Identifier id)
     {
-        Collection.DeleteOne(issue => issue.Equals(obj));
+        Collection.DeleteOne(issue => Equals(issue.Id, id));
     }
 
     public override bool Exists(Identifier id)

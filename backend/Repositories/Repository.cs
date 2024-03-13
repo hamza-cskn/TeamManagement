@@ -30,11 +30,11 @@ public abstract class Repository<T> : IRepository<T>
 
     protected abstract string GetRepositoryName();
     public abstract void Insert(IEnumerable<T> objs);
-    public abstract void Insert(T obj);
+    public abstract void Insert(T comments);
     public abstract void Update(IEnumerable<T> objs);
     public abstract void Update(T obj);
     public abstract T Load(Identifier id);
     public abstract List<T> LoadAll();
-    public abstract void Delete(T obj);
+    public abstract void Delete(Identifier id);
     public abstract bool Exists(Identifier id);
 }

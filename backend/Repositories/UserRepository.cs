@@ -22,9 +22,9 @@ public class UserRepository : Repository<User.User>
         Collection.InsertMany(objs);
     }
 
-    public override void Insert(User.User obj)
+    public override void Insert(User.User comments)
     {
-        Collection.InsertOne(obj);
+        Collection.InsertOne(comments);
     }
     
     public override void Update(IEnumerable<User.User> objs)
@@ -51,14 +51,14 @@ public class UserRepository : Repository<User.User>
         return Collection.FindSync(user => true).ToList();
     }
 
-    public override void Delete(User.User obj)
+    public override void Delete(Identifier id)
     {
-        Collection.DeleteOne(user => user.Equals(obj));
+        Collection.DeleteOne(user => Equals(user.Id, id));
     }
     
     public override bool Exists(Identifier id)
     {
-        return Collection.FindSync(user => user.Id.Equals(id)).Any();
+        return Collection.FindSync(user => Equals(user.Id, id)).Any();
     }
     
     public User.User Load(Expression<Func<User.User, bool>> filter)
