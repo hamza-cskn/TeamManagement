@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using backend.User;
 
 namespace backend.Issue;
 

@@ -30,13 +30,12 @@ builder.Services.AddSingleton(new MongoClient("mongodb://root:secret@localhost:2
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name: "FrontendOrigins", // Give it a name
+    options.AddPolicy(name: "FrontendOrigins",
         policy  =>
-        {
             policy.WithOrigins("http://localhost:3000")
-                .AllowAnyMethod() // If you need to allow other HTTP methods
-                .AllowAnyHeader(); // Allow all headers
-        });
+                .AllowAnyMethod()
+                .AllowAnyHeader() // Allow all headers
+        );
 });
 
 
