@@ -23,7 +23,7 @@ public class IssueController : ControllerBase
     [HttpPost]
     public IActionResult CreateIssue(Issue.Issue issue)
     {
-        issue.Id = new IssueId(Guid.NewGuid());
+        issue.Id = new Issue.Issue.IssueId(Guid.NewGuid());
         _repository.Insert(issue);
         return Ok(new{message="Issue successfully created.", issue=issue});
     }
@@ -44,7 +44,7 @@ public class IssueController : ControllerBase
             return BadRequest(new {message="Requested url does not represent a valid GUID: " + id});
         }
         
-        IssueId issueId = new(guid);
+        Issue.Issue.IssueId issueId = new(guid);
         if (!_repository.Exists(issueId))
         {
             return BadRequest(new {message="Issue with id " + id + " does not exist."});
