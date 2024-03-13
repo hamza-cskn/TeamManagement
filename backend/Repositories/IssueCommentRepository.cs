@@ -4,12 +4,15 @@ using MongoDB.Driver;
 
 namespace backend.Repositories;
 
-public class IssueCommentRepository : Repository<IssueComment>
+public class IssueCommentRepository : Repository<IssueComments>
 {
+    private IssueRepository _issueRepository;
     public IssueCommentRepository(MongoClient mongoClient,
-        ILogger<Repository<IssueComment>> logger,
-        IConfiguration configuration) : base(mongoClient, logger, configuration)
+        ILogger<Repository<IssueComments>> logger,
+        IConfiguration configuration,
+        IssueRepository issueRepository) : base(mongoClient, logger, configuration)
     {
+        _issueRepository = issueRepository;
     }
 
     protected override string GetRepositoryName()
@@ -17,53 +20,64 @@ public class IssueCommentRepository : Repository<IssueComment>
         return "IssueComments";
     }
 
-    public override void Insert(IEnumerable<IssueComment> objs)
+    public override void Insert(IEnumerable<IssueComments> objs)
     {
         Collection.InsertMany(objs);
     }
 
-    public override void Insert(IssueComment obj)
+    public override void Insert(IssueComments comments)
     {
-        Collection.InsertOne(obj);
+        var update = Builders<IssueComments>.Update.Push("comments", comments.Comments);
+        Collection.UpdateOne(obj => Equals(obj.IssueId, comments.IssueId), update);
     }
 
-    public override void Update(IEnumerable<IssueComment> objs)
+    public void Insert(Issue.Issue.IssueId id, IssueComment comment)
+    {
+    }
+
+    public override void Update(IEnumerable<IssueComments> objs)
     {
         foreach (var issueComment in objs)
             Update(issueComment); // todo - this is not efficient
     }
 
-    public override void Update(IssueComment obj)
+    public override void Update(IssueComments comment)
     {
-        var update = Builders<IssueComment>.Update
-                .Set(issueComment => issueComment.Writer, obj.Writer)
-                .Set(issueComment => issueComment.Content, obj.Content);
-        Collection.UpdateOne(issueComment => issueComment.Equals(obj), update);
+        var update = Builders<IssueComments>.Update.Set($"comments.$[c].comment", comment);
+
+        var filter = Builders<IssueComments>.Filter.Eq(i => i.IssueId == comment.IssueId) & 
+                     Builders<IssueComments>.Filter.ElemMatch(i => i,c => c.IssueCommentId == comment.Id);
+
+        Collection.UpdateOneAsync(filter, update);
+    }
+    
+    public void Update(Issue.Issue.IssueId id, IssueComment comment)
+    {
+        
+    }
+    
+    public override IssueComments Load(Identifier issueId)
+    {
+        return Collection.FindSync(comments => Equals(comments.IssueId, issueId)).First();
     }
 
-    public override IssueComment Load(Identifier id)
+    public override List<IssueComments> LoadAll()
     {
-        return Collection.FindSync(issueComment => issueComment.Id.Equals(id)).First();
+        return Collection.FindSync(comments => true).ToList();
     }
-
-    public override List<IssueComment> LoadAll()
+    
+    public override void Delete(Identifier id)
     {
-        throw new NotSupportedException("This method is not supported for IssueCommentRepository. Use LoadAll(Issue.Issue issue) instead.");
-    }
-
-    public List<IssueComment> LoadAll(Issue.Issue issue)
-    {
-        return new List<IssueComment>();
-        //return Collection.FindSync(issueComment => issueComment.IssueId.Equals(issue.Id)).ToList();
-    }
-
-    public override void Delete(IssueComment obj)
-    {
-        Collection.DeleteOne(issueComment => issueComment.Equals(obj));
+        Collection.DeleteOne(comments => Equals(comments.IssueId == id));
     }
 
     public override bool Exists(Identifier id)
     {
-        return Collection.FindSync(issueComment => issueComment.Id.Equals(id)).Any();
+        return Collection.FindSync(comments => Equals(comments.IssueId, id)).Any();
+    }
+    
+    private bool IssueExists(Issue.Issue.IssueId id)
+    {
+        return _issueRepository.Exists(id);
     }
 }

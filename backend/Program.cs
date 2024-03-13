@@ -15,7 +15,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<UserRepository>();
 builder.Services.AddSingleton<IssueRepository>();
 builder.Services.AddSingleton<AuthService>();
-builder.Services.AddSingleton(builder.Configuration); 
+builder.Services.AddSingleton(builder.Configuration);
+builder.Services.AddSingleton<IssueCommentRepository>();
 
 var jwtOptions = builder.Configuration.GetSection("JwtOptions").Get<JwtOptions>()!;
 builder.Services.AddSingleton(jwtOptions);
