@@ -1,10 +1,8 @@
 using System.Text;
 using backend.Auth;
 using backend.Repositories;
-using backend.User;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 
 var builder = WebApplication.CreateBuilder(args);
