@@ -1,5 +1,6 @@
 using backend.Issue;
 using backend.User;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace backend.Repositories;
@@ -27,12 +28,21 @@ public class IssueCommentRepository : Repository<IssueComments>
 
     public override void Insert(IssueComments comments)
     {
-        var update = Builders<IssueComments>.Update.Push("comments", comments.Comments);
-        Collection.UpdateOne(obj => Equals(obj.IssueId, comments.IssueId), update);
+        Collection.InsertOne(comments);
     }
 
-    public void Insert(Issue.Issue.IssueId id, IssueComment comment)
+    public void Insert(Issue.Issue.IssueId issueId, IssueComment comment)
     {
+        /*if (!Exists(issueId))
+        {
+            var comments = new IssueComments(issueId, new() { comment });
+            Collection.InsertOne(comments);
+            return;
+        }*/
+        var filter = Builders<IssueComments>.Filter.Eq("_id", issueId);
+        var update = Builders<IssueComments>.Update.Push("Comments", comment);
+        var options = new UpdateOptions {IsUpsert = true};
+        Collection.UpdateOne(filter, update, options);
     }
 
     public override void Update(IEnumerable<IssueComments> objs)
@@ -41,24 +51,30 @@ public class IssueCommentRepository : Repository<IssueComments>
             Update(issueComment); // todo - this is not efficient
     }
 
-    public override void Update(IssueComments comment)
+    public override void Update(IssueComments comments)
     {
-        var update = Builders<IssueComments>.Update.Set($"comments.$[c].comment", comment);
-
-        var filter = Builders<IssueComments>.Filter.Eq(i => i.IssueId == comment.IssueId) & 
-                     Builders<IssueComments>.Filter.ElemMatch(i => i,c => c.IssueCommentId == comment.Id);
-
-        Collection.UpdateOneAsync(filter, update);
+        Delete(comments.IssueId); // todo - this is not efficient
+        Insert(comments);
     }
-    
-    public void Update(Issue.Issue.IssueId id, IssueComment comment)
+
+    public void Update(Issue.Issue.IssueId issueId, IssueComment comment)
     {
-        
+        var filter = Builders<IssueComments>.Filter.Eq("_id", issueId);
+        filter &= Builders<IssueComments>.Filter.ElemMatch(
+            x => x.Comments, x => x.Id == comment.Id);
+
+        var update = Builders<IssueComments>.Update.Set("Comments.$[comment].Content.Content", "asda");
+        var filterDefinitions = new List<ArrayFilterDefinition<BsonDocument>>
+            { new BsonDocument("comment._id", comment.Id.ToBson()) };
+        var options = new UpdateOptions { ArrayFilters = filterDefinitions, IsUpsert = true };
+        Collection.UpdateOne(filter, update, options);
     }
-    
-    public override IssueComments Load(Identifier issueId)
+
+    public override IssueComments? Load(Identifier issueId)
     {
-        return Collection.FindSync(comments => Equals(comments.IssueId, issueId)).First();
+        var result = Collection.FindSync(
+            comments => comments.IssueId == issueId).ToList();
+        return result.Any() ? result.First() : null;
     }
 
     public override List<IssueComments> LoadAll()
@@ -74,10 +90,5 @@ public class IssueCommentRepository : Repository<IssueComments>
     public override bool Exists(Identifier id)
     {
         return Collection.FindSync(comments => Equals(comments.IssueId, id)).Any();
-    }
-    
-    private bool IssueExists(Issue.Issue.IssueId id)
-    {
-        return _issueRepository.Exists(id);
     }
 }

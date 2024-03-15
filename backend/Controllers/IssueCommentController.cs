@@ -2,6 +2,7 @@ using backend.Issue;
 using backend.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Bson;
 
 namespace backend.Controllers;
 
@@ -31,10 +32,24 @@ public class IssueCommentController : ControllerBase
     
     [Authorize]
     [HttpGet]
-    public IActionResult GetAll(Issue.Issue.IssueId issueId)
+    public IActionResult GetAll(string issueId)
     {
-        var comments = _repository.Load(issueId).Comments;
-        return Ok(new{comments=comments});
+        if (!Guid.TryParse(issueId, out Guid issueGuid))
+            return BadRequest(new {message="Requested url does not represent a valid GUID: " + issueId});
+        
+        var issueIdentifier = new Issue.Issue.IssueId(issueGuid);
+        var issueComments = _repository.Load(issueIdentifier);
+
+        List<IssueComment> comments = issueComments == null ? new List<IssueComment>() : issueComments.Comments;
+        Console.WriteLine(comments.ToJson());
+        var result = comments.Select<IssueComment, Object>(c =>
+        {
+            var id = c.Id!.GetId();
+            var content = c.Content;
+            var writer = c.Writer;
+            return new { id, content, writer };
+        });
+        return Ok(new{comments=result});
     }
     
     [Authorize]

@@ -1,5 +1,4 @@
-using backend.User;
-using MongoDB.Bson.Serialization.Attributes;
+using ThirdParty.Json.LitJson;
 
 namespace backend.Issue;
 
@@ -7,12 +6,7 @@ public record IssueComment(RichContent Content, Guid Writer)
 {
     public IssueCommentId? Id = null;
     
-    public IssueComment(IssueCommentId id, RichContent content, Guid writer) : this(content, writer)
-    {
-        Id = id;
-        Content = content;
-        Writer = writer;
-    }
+    public IssueComment() : this(null, Guid.Empty) {}
 }
 
 public class IssueCommentId : ModelId
