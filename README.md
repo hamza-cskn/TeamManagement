@@ -9,3 +9,4 @@
 
 ## Screenshots
 ![image](https://github.com/hamza-cskn/TeamManagement/assets/36128276/a3881eee-7487-4a45-9295-74476f1ccac9)
+![image](https://github.com/hamza-cskn/TeamManagement/assets/36128276/0ff0afe9-3e2b-430b-98e6-6d7f52f51ba9)
