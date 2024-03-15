@@ -39,14 +39,13 @@ public class IssueRepository : Repository<Issue.Issue>
             .Set(issue => issue.Title, obj.Title)
             .Set(issue => issue.Content, obj.Content)
             .Set(issue => issue.Status, obj.Status)
-            .Set(issue => issue.Assignees, obj.Assignees)
-            .Set(issue => issue.Comments, obj.Comments);
+            .Set(issue => issue.Assignees, obj.Assignees);
         Collection.UpdateOne(issue => issue.Equals(obj), update);
     }
 
     public override Issue.Issue Load(Identifier id)
     {
-        return Collection.FindSync(issue => issue.Id.Equals(id)).First();
+        return Collection.FindSync(issue => Equals(issue.Id, id)).First();
     }
 
     public override List<Issue.Issue> LoadAll()

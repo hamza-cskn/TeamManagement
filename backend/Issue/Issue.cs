@@ -34,7 +34,6 @@ public class Issue
     public string Priority { get; set;}
     public string Category { get; set;}
     public Guid Creator { get; set; }
-    public List<IssueComment>? Comments { get; set; }
     public List<Guid>? Assignees { get; set; }
     
     public Issue()
@@ -49,7 +48,6 @@ public class Issue
         string priority,
         string status,
         string category,
-        List<IssueComment> comments,
         List<Guid> assignees)
     {
         Id = id;
@@ -59,7 +57,6 @@ public class Issue
         Priority = priority;
         Status = status;
         Category = category;
-        Comments = comments;
         Assignees = assignees;
     }
     

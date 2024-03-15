@@ -50,7 +50,6 @@ public class IssueController : ControllerBase
             return BadRequest(new {message="Issue with id " + id + " does not exist."});
         }
         var issue = _repository.Load(issueId);
-        issue.Comments = new List<IssueComment>();//_commentRepository.LoadAll(issue);
         return Ok(new{issue=issue});
     }
     
