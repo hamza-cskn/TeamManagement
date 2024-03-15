@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace backend.Issue;
 
@@ -37,10 +38,7 @@ public class Issue
     public Guid Creator { get; set; }
     public List<Guid>? Assignees { get; set; }
     
-    public Issue()
-    {
-        
-    }
+    public Issue(){}
 
     public Issue(IssueId id,
         DateTime createdAt,
