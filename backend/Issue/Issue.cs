@@ -23,6 +23,7 @@ public enum IssueField
 
 public record IssueLog(DateTime Time, IssueField Field, string OldValue, string NewValue);
 
+[BsonIgnoreExtraElements]
 public class Issue
 {
     public IssueId? Id { get; set;}
