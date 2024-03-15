@@ -9,10 +9,7 @@ public class RichContent
 {
     [StringLength(50000)]
     public string Content { get; set; }
-    public RichContent()
-    {
-        
-    }
+    public RichContent() {}
     
     public RichContent(string content)
     {

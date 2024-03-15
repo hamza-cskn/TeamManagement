@@ -1,4 +1,3 @@
-using backend.Issue;
 using backend.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -40,15 +39,12 @@ public class IssueController : ControllerBase
     public IActionResult Get(string id)
     {
         if (!Guid.TryParse(id, out Guid guid))
-        {
             return BadRequest(new {message="Requested url does not represent a valid GUID: " + id});
-        }
         
         Issue.Issue.IssueId issueId = new(guid);
         if (!_repository.Exists(issueId))
-        {
             return BadRequest(new {message="Issue with id " + id + " does not exist."});
-        }
+        
         var issue = _repository.Load(issueId);
         return Ok(new{issue=issue});
     }

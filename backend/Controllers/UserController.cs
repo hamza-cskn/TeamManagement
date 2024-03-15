@@ -28,9 +28,7 @@ public class UserController : ControllerBase
     public IActionResult Get(string id)
     {
         if (!Guid.TryParse(id, out Guid guid))
-        {
             return BadRequest(new {message="Requested url does not represent a valid GUID: " + id});
-        }
         
         UserId userId = new(guid);
         return Ok(new{users=_repository.Load(userId)});
