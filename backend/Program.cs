@@ -25,7 +25,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(opts => PrepareJwtOptions(jwtOptions, opts));
 builder.Services.AddAuthorization();
 
-builder.Services.AddSingleton(new MongoClient("mongodb://root:secret@localhost:27017/"));
+builder.Services.AddSingleton(new MongoClient("mongodb://root:secret@3.80.108.237:27017/")); // todo - do not use in-build urls
 
 builder.Services.AddCors(options =>
 {
