@@ -1,6 +1,5 @@
-import {MessageBubble} from "./IssueBubble";
-import {useEffect, useState} from "react";
-import {ErrorComponent} from "../../auth/Error";
+import {IssueBubble} from "./IssueBubble";
+import {useState} from "react";
 import {authorizedFetch} from "../../auth/AuthHandler";
 
 async function fetchComments(issue, setComments, setError) {
@@ -40,8 +39,8 @@ export function Comments() {
 
     return (<section className="bg-white dark:bg-gray-900 py-8 lg:py-16 antialiased">
         <div className="max-w-2xl px-4">
-            {comments.map((comment, index) => <MessageBubble content={comment} date={"9 April 2009 19:23"}
-                                                             writer={"Steve Jobs"}/>)}
+            {comments.map((comment, index) => <IssueBubble content={comment} date={"9 April 2009 19:23"}
+                                                           writer={"Steve Jobs"}/>)}
             <div className="ml-10">
                 <div className="flex justify-between mb-4">
                     <h2 className="text-lg lg:text-2xl font-bold text-gray-900 dark:text-white">Discussion</h2>

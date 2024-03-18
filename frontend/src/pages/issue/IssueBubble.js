@@ -1,19 +1,24 @@
-export function MessageBubble({content, writer, date, self= false}) {
+export function IssueBubble({content, writer, date, self= false}) {
     let borderColor, bgColor;
     if (self) {
-        borderColor = "border-blue-300";
-        bgColor = "bg-blue-100";
+        borderColor = "border-[#54aeff] border-opacity-40";
+        bgColor = "bg-[#ddf4ff]";
     } else {
         borderColor = "border-gray-300";
         bgColor = "bg-[#f6f8fa]";
     }
+
+    const someDate = new Date('2024-03-18 09:56:00');
+    date = getRelativeTime(someDate);
     return (
         <div className="flex items-start gap-2.5 pl-5">
-            <img className="w-8 h-8 rounded-full" src="/docs/images/people/linkedinphoto.jpeg" alt="Jese image"/>
+            <img className="w-8 h-8 rounded-full" src="/docs/images/people/linkedinphoto.jpeg" alt="Profile"/>
             <div className={`flex flex-col w-full max-w-[640px] leading-1.5 border ${borderColor} bg-white rounded-e-md rounded-es-md dark:bg-gray-700`}>
                 <div className={`flex items-center space-x-2 pl-4 p-2 rounded-tr-md border-b ${bgColor} ${borderColor}`}>
-                    <a href="#" className="text-sm font-semibold text-gray-600 dark:text-white hover:text-blue-600 hover:underline">{writer.name}</a>
-                    <span className="text-sm font-normal text-gray-500 dark:text-gray-400">{date}</span>
+                    <a href="#" className="text-sm font-semibold text-gray-800 dark:text-white hover:text-blue-600 hover:underline">{writer.name}</a>
+                    {date &&
+                        <span className="text-sm font-medium text-gray-500 dark:text-gray-400">commented {date}</span>
+                    }
                 </div>
                 <p className="text-sm py-2.5 pl-4 text-gray-700 font-medium dark:text-white">
                     {content}
@@ -34,14 +39,47 @@ export function MessageBubble({content, writer, date, self= false}) {
                  className="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-40 dark:bg-gray-700 dark:divide-gray-600">
                 <ul className="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownMenuIconButton">
                     <li>
-                        <a href="#"
-                           className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Edit</a>
+                        <a href="#" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Edit</a>
                     </li>
                     <li>
-                        <a href="#"
-                           className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-red">Delete</a>
+                        <a href="#" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-red">Delete</a>
                     </li>
                 </ul>
             </div>
         </div>);
+}
+
+function getRelativeTime(date) {
+    if (new Date() < date - 10000) // date is future with 10 seconds threshold
+        return undefined;
+    const differenceInMs = new Date() - date;
+
+    // Time intervals in milliseconds
+    const minute = 60 * 1000;
+    const hour = minute * 60;
+    const day = hour * 24;
+    const week = day * 7;
+    const month = day * 30;
+    const year = day * 365;
+
+    const timeUnits = [
+        { unit: 'year', value: year },
+        { unit: 'month', value: month },
+        { unit: 'week', value: week },
+        { unit: 'day', value: day },
+        { unit: 'hour', value: hour },
+        { unit: 'minute', value: minute }
+    ];
+
+    for (const { unit, value } of timeUnits ) {
+        const relativeDifference = Math.round(differenceInMs / value);
+
+        if (relativeDifference >= 1)
+        {
+            const relativeTimeFormatter = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
+            return relativeTimeFormatter.format(-relativeDifference, unit);
+        }
+    }
+
+    return 'now';
 }

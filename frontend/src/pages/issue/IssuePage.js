@@ -1,11 +1,10 @@
 import {BreadcrumbComponent, FooterComponent, NavbarComponent} from "../../common/Layout";
-import {IssuePriority, IssueStatus} from "./IssuesPage";
+import {IssueStatus} from "./IssuesPage";
 import {useEffect, useState} from "react";
 import {authorizedFetch} from "../../auth/AuthHandler";
 import {useLocation} from "react-router-dom";
 import {ErrorComponent} from "../../auth/Error";
-import {MessageBubble} from "./IssueBubble";
-import {Comments} from "./IssueComment";
+import {IssueBubble} from "./IssueBubble";
 
 /**
  * returns the first n characters of the string
@@ -52,7 +51,6 @@ export function IssuePage() {
     useEffect(() => {
         fetchIssue(issueId, setIssue, setError); //do it background
     }, [issueId, setIssue, setError]);
-    console.log("asd");
     return <div>
         <NavbarComponent currentPage={"Issues"}/>
         <BreadcrumbComponent items={["Issues", shortString(issue ? issue.title : "...", 100)]}/>
@@ -76,7 +74,7 @@ function IssueArea({issue, error, comments}) {
             {issue.title}
         </h1>
         <div className="pt-12 pb-12">
-            <MessageBubble content={issue.content.content} writer={{name: "Hamza COŞKUN"}} date={"5 July 2004 06:35"} self={true}/>
+            <IssueBubble content={issue.content.content} writer={{name: "Hamza COŞKUN"}} date={Date.now()} self={true}/>
         </div>
     </div>
 }
