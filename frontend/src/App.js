@@ -6,6 +6,8 @@ import {NotFoundPage} from "./pages/404Page";
 import {IssuePage} from "./pages/issue/IssuePage";
 import {LoginPage} from "./pages/auth/LoginPage";
 import PrivateRoutes from "./pages/auth/PrivateRoute";
+import {ChatPage} from "./pages/chat/ChatsPage";
+import {IssueCreatePage} from "./pages/issue/IssueCreatePage";
 
 function App() {
     return (
@@ -15,6 +17,8 @@ function App() {
                     <Route path="/" element={<HomePage/>}/>
                     <Route path="/issues" element={<IssuesPage/>}/>
                     <Route path="/issues/*" element={<IssuePage/>}/>
+                    <Route path="/issues/create" element={<IssueCreatePage/>}/>
+                    <Route path="/chat" element={<ChatPage/>}/>
                 </Route>
                 <Route path="*" element={<NotFoundPage/>}/>
                 <Route path="/login" element={<LoginPage/>}/>
