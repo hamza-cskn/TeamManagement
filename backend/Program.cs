@@ -1,5 +1,6 @@
 using System.Text;
 using backend.Auth;
+using backend.Chat;
 using backend.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -34,8 +35,12 @@ builder.Services.AddCors(options =>
             policy.WithOrigins("http://localhost:3000")
                 .AllowAnyMethod()
                 .AllowAnyHeader() // Allow all headers
+                .AllowCredentials()
         );
 });
+
+builder.Services.AddSignalR();
+
 
 
 var app = builder.Build();
@@ -52,6 +57,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<ChatHub>("/chathub");
 
 app.Run();
 
