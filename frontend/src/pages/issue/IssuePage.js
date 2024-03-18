@@ -3,7 +3,7 @@ import {IssueStatus} from "./IssuesPage";
 import {useEffect, useState} from "react";
 import {authorizedFetch} from "../../auth/AuthHandler";
 import {useLocation} from "react-router-dom";
-import {ErrorComponent} from "../../auth/Error";
+import {ErrorComponent, LoadingComponent} from "../../auth/FetchStates";
 import {IssueBubble} from "./IssueBubble";
 
 /**
@@ -64,7 +64,7 @@ function IssueArea({issue, error, comments}) {
         return <ErrorComponent error={error} message={"An error occurred while getting issue information."}/>
 
     if (!issue)
-        return <div className="bg-gray-50 min-h-screen text-title text-center">Loading...</div>
+        return <LoadingComponent message={"Loading..."}/>
 
     return <div className="bg-white min-h-screen pt-6">
         <h1 className="text-3xl font-bold pl-8">

@@ -2,7 +2,7 @@ import {BreadcrumbComponent, FooterComponent, NavbarComponent} from "../../commo
 import {useEffect, useState} from "react";
 import {shortString} from "./IssuePage";
 import {authorizedFetch} from "../../auth/AuthHandler";
-import {ErrorComponent} from "../../auth/Error";
+import {ErrorComponent, LoadingComponent} from "../../auth/FetchStates";
 import {useNavigate} from "react-router-dom";
 
 const ROWS_PER_PAGE = 5;
@@ -30,11 +30,11 @@ function IssuesArea() {
     }, []);
 
     if (error) {
-        return (<ErrorComponent error={error.message} message={"An error occurred while getting issues information"}/>);
+        return <ErrorComponent error={error.message} message={"An error occurred while getting issues information"}/>;
     }
 
     if (!issues) {
-        return (<div className="bg-gray-50 min-h-screen text-title text-center">Loading...</div>);
+        return <LoadingComponent message={"Loading..."}/>;
     }
 
     return (

@@ -4,6 +4,7 @@ import {ChatBubble} from "./ChatsPage";
 import {FooterComponent, NavbarComponent} from "../../common/Layout";
 import "../../App.css";
 import {shortString} from "../issue/IssuePage";
+import {ErrorComponent, LoadingComponent} from "../../auth/FetchStates";
 
 let isConnectionCreated = false;
 
@@ -55,9 +56,9 @@ export function Chat() {
         }
     }, [hubConnection])
     if (error)
-        return <div className="text-center">An error occurred: {error}</div>
+        return <ErrorComponent message={"Could not connected to the server."} error={error}/>
     if (!hubConnection)
-        return <div className="text-center">Connecting...</div>
+        return <LoadingComponent message={"Connecting..."}/>
     const user = {name: {name: "Hamza", surname: "COŞKUN"}};
     return (
         <div>
