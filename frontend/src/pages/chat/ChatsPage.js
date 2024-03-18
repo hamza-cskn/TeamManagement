@@ -1,4 +1,6 @@
 import {Chat} from "./Chat";
+import {BreadcrumbComponent, FooterComponent, NavbarComponent} from "../../common/Layout";
+import React from "react";
 
 export function ChatBubble({user, message}) {
     let date = new Date();
@@ -60,5 +62,10 @@ function DetailsButton() {
 }
 
 export function ChatPage() {
-    return Chat();
+    return <div>
+        <NavbarComponent currentPage={"Chat"}/>
+        <BreadcrumbComponent items={["Chat"]}/>
+        <Chat/>
+        <FooterComponent/>
+    </div>
 }
