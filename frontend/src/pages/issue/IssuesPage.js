@@ -3,6 +3,7 @@ import {useEffect, useState} from "react";
 import {shortString} from "./IssuePage";
 import {authorizedFetch} from "../../auth/AuthHandler";
 import {ErrorComponent} from "../../auth/Error";
+import {useNavigate} from "react-router-dom";
 
 const ROWS_PER_PAGE = 5;
 
@@ -55,7 +56,10 @@ function IssuesArea() {
 }
 
 function CreateButton() {
-    return (<button type="button"
+    const navigate = useNavigate();
+    return (<button onClick={() => {
+        navigate('/issues/create');
+    }} type="button"
                     className="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-400 font-medium rounded-lg
                     text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-blue-900 m-0">
         <svg height="20" width="20" fill="#ffffff" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
