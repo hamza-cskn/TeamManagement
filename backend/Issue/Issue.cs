@@ -61,7 +61,6 @@ public class Issue
     
     public class IssueId : ModelId
     {
-        public IssueId(Guid id) : base(id)
-        {}
+        public IssueId(Guid id) : base(id) {}
     }
 }

@@ -31,14 +31,14 @@ public class IssueCommentRepository : Repository<IssueComments>
         Collection.InsertOne(comments);
     }
 
-    public void Insert(Issue.Issue.IssueId issueId, IssueComment comment)
+    public void Insert(Issue.Issue.IssueId issueId, Comment comment)
     {
-        /*if (!Exists(issueId))
-        {
+        if (!Exists(issueId))
+        {   //todo do it for everywhere
             var comments = new IssueComments(issueId, new() { comment });
-            Collection.InsertOne(comments);
+            Collection.InsertOne(comments); 
             return;
-        }*/
+        }
         var filter = Builders<IssueComments>.Filter.Eq("_id", issueId);
         var update = Builders<IssueComments>.Update.Push("Comments", comment);
         var options = new UpdateOptions {IsUpsert = true};
@@ -57,17 +57,19 @@ public class IssueCommentRepository : Repository<IssueComments>
         Insert(comments);
     }
 
-    public void Update(Issue.Issue.IssueId issueId, IssueComment comment)
+    public bool Update(Issue.Issue.IssueId issueId, Comment comment)
     {
-        var filter = Builders<IssueComments>.Filter.Eq("_id", issueId);
-        filter &= Builders<IssueComments>.Filter.ElemMatch(
-            x => x.Comments, x => x.Id == comment.Id);
+        var filter = Builders<IssueComments>.Filter.Eq("_id", issueId); 
+ 
+        var update = Builders<IssueComments>.Update.Set("Comments.$[comment].Content.Content", comment.Content.Content); 
+ 
+        var arrayFilter = new BsonDocumentArrayFilterDefinition<BsonDocument>(
+            new BsonDocument("comment._id", comment.Id.ToBsonDocument()));
 
-        var update = Builders<IssueComments>.Update.Set("Comments.$[comment].Content.Content", "asda");
-        var filterDefinitions = new List<ArrayFilterDefinition<BsonDocument>>
-            { new BsonDocument("comment._id", comment.Id.ToBson()) };
-        var options = new UpdateOptions { ArrayFilters = filterDefinitions, IsUpsert = true };
-        Collection.UpdateOne(filter, update, options);
+        var options = new UpdateOptions { ArrayFilters = new List<ArrayFilterDefinition> { arrayFilter }, IsUpsert = false};
+ 
+        var result = Collection.UpdateOne(filter, update, options);
+        return result.IsModifiedCountAvailable;
     }
 
     public override IssueComments? Load(Identifier issueId)

@@ -19,13 +19,13 @@ public class IssueCommentController : ControllerBase
     
     [Authorize]
     [HttpPost]
-    public IActionResult CreateComment(string issueId, IssueComment comment)
+    public IActionResult CreateComment(string issueId, Comment comment)
     {
         if (!Guid.TryParse(issueId, out Guid issueGuid))
             return BadRequest(new {message="Requested url does not represent a valid GUID: " + issueId});
         
         var issueIdentifier = new Issue.Issue.IssueId(issueGuid);
-        comment.Id = new IssueCommentId(Guid.NewGuid());
+        comment.Id = new CommentId(Guid.NewGuid());
         _repository.Insert(issueIdentifier, comment);
         return Ok(new{message="Comment successfully created.", comment=comment});
     }
@@ -40,9 +40,9 @@ public class IssueCommentController : ControllerBase
         var issueIdentifier = new Issue.Issue.IssueId(issueGuid);
         var issueComments = _repository.Load(issueIdentifier);
 
-        List<IssueComment> comments = issueComments == null ? new List<IssueComment>() : issueComments.Comments;
+        List<Comment> comments = issueComments == null ? new List<Comment>() : issueComments.Comments;
         Console.WriteLine(comments.ToJson());
-        var result = comments.Select<IssueComment, Object>(c =>
+        var result = comments.Select<Comment, Object>(c =>
         {
             var id = c.Id!.GetId();
             var content = c.Content;
@@ -54,7 +54,7 @@ public class IssueCommentController : ControllerBase
     
     [Authorize]
     [HttpPut("{id}")]
-    public IActionResult UpdateComment(string issueId, string id, IssueComment comment)
+    public IActionResult UpdateComment(string issueId, string id, Comment comment)
     {
         if (!Guid.TryParse(id, out Guid guid))
             return BadRequest(new {message="Requested url does not represent a valid GUID: " + id});
@@ -62,9 +62,11 @@ public class IssueCommentController : ControllerBase
         if (!Guid.TryParse(issueId, out Guid issueGuid))
             return BadRequest(new {message="Requested url does not represent a valid GUID: " + issueId});
         
-        comment.Id = new IssueCommentId(guid);
+        comment.Id = new CommentId(guid);
         var issueIdentifier = new Issue.Issue.IssueId(issueGuid);
-        _repository.Update(issueIdentifier, comment);
+        bool success = _repository.Update(issueIdentifier, comment);
+        if (!success)
+            return BadRequest(new {message="An error occurred while updating the comment."});
         return Ok(new{message="Comment successfully updated."});
     }
 }
