@@ -17,6 +17,42 @@ const clearForm = () => {
     deleteFormDraft();
 }
 
+function postIssue(title, content, category, priority) {
+    return authorizedFetch("http://localhost:5229/issue", {
+        method: "POST",
+        body: JSON.stringify({
+            creator: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            title,
+            content: {content},
+            category,
+            priority
+        })
+    })
+}
+
+function handleSubmit(e, navigate) {
+    e.preventDefault();
+    const title = getFormTitle();
+    const description = getFormDescription();
+    const priority = getFormPriority();
+    const category = getFormCategory();
+
+    // title and description is cannot be empty but validation is cheap fairly
+    if (title === "" || description === "" || category === "Select category" || priority === "Select priority")
+        return alert("Please fill all fields.");
+
+    postIssue(title, description, category, priority).then(res => {
+        if (!res.ok) {
+            alert("An error occurred while creating issue.");
+            return;
+        }
+        clearForm();
+        res.json().then(data => {
+            navigate("/issues/" + data.issue.id.id);
+        })
+    }).catch(ex => alert(ex.toString()));
+}
+
 export function IssueCreatePage() {
     return (<div>
         <NavbarComponent currentPage={"Create Issue"}/>
@@ -70,7 +106,7 @@ function CreateForm({backupData}) {
         }
         <div className="py-8 px-4 mx-auto max-w-4xl lg:py-16">
             <h2 className="mb-4 text-xl font-bold text-gray-900 dark:text-white">Create an issue</h2>
-            <form action="#">
+            <form action="#" onSubmit={e => handleSubmit(e, navigate)}>
                 <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
                     <div className="sm:col-span-2">
                         <label form="name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
