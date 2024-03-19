@@ -25,11 +25,6 @@ public class IssueCommentRepository : Repository<IssueComments>
         Collection.InsertMany(objs);
     }
 
-    public override void Insert(IssueComments comments)
-    {
-        Collection.InsertOne(comments);
-    }
-
     public void Insert(Guid issueId, Comment comment)
     {
         if (!Exists(issueId))
@@ -52,7 +47,7 @@ public class IssueCommentRepository : Repository<IssueComments>
 
     public override void Update(IssueComments comments)
     {
-        Delete((Guid) comments.IssueId!); // todo - this is not efficient
+        Delete((Guid) comments.Id!); // todo - this is not efficient
         Insert(comments);
     }
 
@@ -71,25 +66,8 @@ public class IssueCommentRepository : Repository<IssueComments>
         return result.IsModifiedCountAvailable;
     }
 
-    public override IssueComments? Load(Guid issueId)
-    {
-        var result = Collection.FindSync(
-            comments => comments.IssueId == issueId).ToList();
-        return result.Any() ? result.First() : null;
-    }
-
     public override List<IssueComments> LoadAll()
     {
         return Collection.FindSync(comments => true).ToList();
-    }
-    
-    public override void Delete(Guid id)
-    {
-        Collection.DeleteOne(comments => Equals(comments.IssueId == id));
-    }
-
-    public override bool Exists(Guid id)
-    {
-        return Collection.FindSync(comments => Equals(comments.IssueId, id)).Any();
     }
 }

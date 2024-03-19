@@ -21,12 +21,7 @@ public class IssueRepository : Repository<Issue.Issue>
     {
         Collection.InsertMany(objs);
     }
-
-    public override void Insert(Issue.Issue obj)
-    {
-        Collection.InsertOne(obj);
-    }
-
+    
     public override void Update(IEnumerable<Issue.Issue> objs)
     {
         foreach (var issue in objs)
@@ -42,24 +37,9 @@ public class IssueRepository : Repository<Issue.Issue>
             .Set(issue => issue.Assignees, obj.Assignees);
         Collection.UpdateOne(issue => issue.Equals(obj), update);
     }
-
-    public override Issue.Issue Load(Guid id)
-    {
-        return Collection.FindSync(issue => Equals(issue.Id, id)).First();
-    }
-
+    
     public override List<Issue.Issue> LoadAll()
     {
         return Collection.FindSync(issue => true).ToList();
-    }
-
-    public override void Delete(Guid id)
-    {
-        Collection.DeleteOne(issue => Equals(issue.Id, id));
-    }
-
-    public override bool Exists(Guid id)
-    {
-        return Collection.FindSync(issue => issue.Id.Equals(id)).Any();
     }
 }

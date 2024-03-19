@@ -2,17 +2,16 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace backend.Issue;
 
-public record IssueComments
+public class IssueComments : Identifiable
 {
     [BsonId]
-    public Guid? IssueId { get; set; }
     public  List<Comment> Comments { get; set; }
     
     public IssueComments(){}
 
-    public IssueComments(Guid issueId, List<Comment> comments)
+    public IssueComments(Guid id, List<Comment> comments)
     {
-        IssueId = issueId;
+        Id = id;
         Comments = comments;
     }
 }

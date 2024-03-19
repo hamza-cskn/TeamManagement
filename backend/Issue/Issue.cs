@@ -25,9 +25,8 @@ public enum IssueField
 public record IssueLog(DateTime Time, IssueField Field, string OldValue, string NewValue);
 
 [BsonIgnoreExtraElements]
-public class Issue
+public class Issue : Identifiable
 {
-    public Guid? Id { get; set;}
     public DateTime CreatedAt { get; set;}
     [StringLength(100)]
     public string Title { get; set; }

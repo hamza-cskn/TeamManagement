@@ -21,12 +21,6 @@ public class UserRepository : Repository<User.User>
     {
         Collection.InsertMany(objs);
     }
-
-    public override void Insert(User.User comments)
-    {
-        Collection.InsertOne(comments);
-    }
-    
     public override void Update(IEnumerable<User.User> objs)
     {
         foreach (var user in objs)
@@ -40,30 +34,10 @@ public class UserRepository : Repository<User.User>
             .Set(user => user.Permissions, obj.Permissions);
         Collection.UpdateOne(user => user.Equals(obj), update);
     }
-
-    public override User.User Load(Guid id)
-    {
-        return Collection.FindSync(user => user.Id.Equals(id)).First();
-    }
-
+    
     public override List<User.User> LoadAll()
     {
         return Collection.FindSync(user => true).ToList();
-    }
-
-    public override void Delete(Guid id)
-    {
-        Collection.DeleteOne(user => Equals(user.Id, id));
-    }
-    
-    public override bool Exists(Guid id)
-    {
-        return Collection.FindSync(user => Equals(user.Id, id)).Any();
-    }
-    
-    public User.User Load(Expression<Func<User.User, bool>> filter)
-    {
-        return Collection.FindSync(filter).First();
     }
     
     public List<User.User> LoadAll(Expression<Func<User.User, bool>> filter)

@@ -3,10 +3,9 @@ using MongoDB.Bson.Serialization.Attributes;
 namespace backend.User;
 
 [BsonIgnoreExtraElements]
-public class User
+public class User : Identifiable
+
 {
-    [BsonId]
-    public Guid? Id { get; set; }
     public UserName Name { get; set; }
     public string Mail { get; set; }
     public List<UserPermission> Permissions { get; set; }
