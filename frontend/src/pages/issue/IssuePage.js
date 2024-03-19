@@ -5,6 +5,22 @@ import {authorizedFetch} from "../../auth/AuthHandler";
 import {useLocation} from "react-router-dom";
 import {ErrorComponent, LoadingComponent} from "../../auth/FetchStates";
 import {IssueBubble} from "./IssueBubble";
+import EditorJS from "@editorjs/editorjs";
+import Editor from "../../editor/Editor";
+
+// Initial Data
+const INITIAL_DATA = {
+    time: new Date().getTime(),
+    blocks: [
+        {
+            type: "header",
+            data: {
+                text: "This is my awesome editor!",
+                level: 1,
+            },
+        },
+    ],
+};
 
 /**
  * returns the first n characters of the string
@@ -60,12 +76,12 @@ export function IssuePage() {
 }
 
 function IssueArea({issue, error, comments}) {
+    const [data, setData] = useState(INITIAL_DATA);
+
     if (error)
         return <ErrorComponent error={error} message={"An error occurred while getting issue information."}/>
-
     if (!issue)
         return <LoadingComponent message={"Loading..."}/>
-
     return <div className="bg-white min-h-screen pt-6">
         <h1 className="text-3xl font-bold pl-8">
             <div className="inline-flex mr-4">
@@ -75,6 +91,19 @@ function IssueArea({issue, error, comments}) {
         </h1>
         <div className="pt-12 pb-12">
             <IssueBubble content={issue.content.content} writer={{name: "Hamza COŞKUN"}} date={Date.now()} self={true}/>
+        </div>
+        <div>
+            <div className="editor">
+                <Editor data={data} onChange={setData} editorblock="editorjs-container"/>
+                <button
+                    className="savebtn"
+                    onClick={() => {
+                        alert(JSON.stringify(data));
+                    }}
+                >
+                    Save
+                </button>
+            </div>
         </div>
     </div>
 }
