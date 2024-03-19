@@ -24,6 +24,8 @@ export function authorizedFetch(url, options) {
             options.headers = {};
 
         options.headers['Authorization'] = `Bearer ${token}`;
+        if (options.headers['Content-Type'] == null)
+            options.headers['Content-Type'] = 'application/json';
     }
     return fetch(url, options);
 }
