@@ -47,3 +47,43 @@
   height: 0;
 }
 
+/* editor styles */
+
+.editor {
+  box-shadow: 0px 0px 20px 0px rgba(76, 87, 125, 0.02);
+  background: #fff;
+  padding: 0;
+  max-width: 700px;
+  width: 100%;
+  margin: auto;
+}
+
+#editorjs-container {
+  background-color: #f9f9f9;
+  padding: 0;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  min-height: 200px;
+}
+
+.ce-toolbar__content, .ce-block__content {
+  max-width: unset;
+  width: 92% !important;
+}
+
+.editorjs-codeFlask_Wrapper .editorjs-codeFlask_LangDisplay {
+  max-width: unset;
+  height: unset !important;
+}
+
+.editor button {
+  border: none;
+  border-radius: 20px;
+  padding: 10px 20px;
+  background: #555;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* editor styles */
