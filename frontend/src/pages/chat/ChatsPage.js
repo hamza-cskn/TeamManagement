@@ -13,8 +13,12 @@ export function ChatBubble({user, message}) {
                 <span className="text-sm font-semibold text-gray-50 dark:text-white">{user.name.name + " " + user.name.surname}</span>
                 <span className="text-sm font-normal text-gray-100 dark:text-gray-400">{dateString}</span>
             </div>
-            <p className="text-sm font-normal py-2.5 text-white dark:text-white break-words">{message}</p>
-            {/* <span className="text-sm font-normal text-gray-500 dark:text-gray-400">Delivered</span>*/}
+            <p className="text-sm font-normal py-2.5 text-white dark:text-white break-words">
+                {message.split("\n").map((line) => {
+                    return <div>{line}<br/></div>;
+                })}
+            </p>
+                {/* <span className="text-sm font-normal text-gray-500 dark:text-gray-400">Delivered</span>*/}
         </div>
     </div>
 }

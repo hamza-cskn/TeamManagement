@@ -131,7 +131,9 @@ function InputBox({text, setText, hubConnection}) {
                    setText(e.target.value)
                }}
                onKeyDown={(e) => {
-                   if (e.key === "Enter" && text.trim() !== "") {
+                   if (e.key === "Enter" && !e.shiftKey && text.trim() !== "")
+                   {
+                       e.preventDefault();
                        sendMsg(hubConnection, text);
                        setText("");
                    }
