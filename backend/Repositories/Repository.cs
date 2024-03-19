@@ -33,8 +33,8 @@ public abstract class Repository<T> : IRepository<T>
     public abstract void Insert(T comments);
     public abstract void Update(IEnumerable<T> objs);
     public abstract void Update(T obj);
-    public abstract T Load(Identifier id);
+    public abstract T Load(Guid id);
     public abstract List<T> LoadAll();
-    public abstract void Delete(Identifier id);
-    public abstract bool Exists(Identifier id);
+    public abstract void Delete(Guid id);
+    public abstract bool Exists(Guid id);
 }

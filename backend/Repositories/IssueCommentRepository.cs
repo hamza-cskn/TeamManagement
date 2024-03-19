@@ -1,5 +1,4 @@
 using backend.Issue;
-using backend.User;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
@@ -31,7 +30,7 @@ public class IssueCommentRepository : Repository<IssueComments>
         Collection.InsertOne(comments);
     }
 
-    public void Insert(Issue.Issue.IssueId issueId, Comment comment)
+    public void Insert(Guid issueId, Comment comment)
     {
         if (!Exists(issueId))
         {   //todo do it for everywhere
@@ -53,15 +52,15 @@ public class IssueCommentRepository : Repository<IssueComments>
 
     public override void Update(IssueComments comments)
     {
-        Delete(comments.IssueId); // todo - this is not efficient
+        Delete((Guid) comments.IssueId!); // todo - this is not efficient
         Insert(comments);
     }
 
-    public bool Update(Issue.Issue.IssueId issueId, Comment comment)
+    public bool Update(Guid issueId, Comment comment)
     {
         var filter = Builders<IssueComments>.Filter.Eq("_id", issueId); 
  
-        var update = Builders<IssueComments>.Update.Set("Comments.$[comment].Content.Content", comment.Content.Content); 
+        var update = Builders<IssueComments>.Update.Set("Comments.$[comment].Content.Content", comment.Content); 
  
         var arrayFilter = new BsonDocumentArrayFilterDefinition<BsonDocument>(
             new BsonDocument("comment._id", comment.Id.ToBsonDocument()));
@@ -72,7 +71,7 @@ public class IssueCommentRepository : Repository<IssueComments>
         return result.IsModifiedCountAvailable;
     }
 
-    public override IssueComments? Load(Identifier issueId)
+    public override IssueComments? Load(Guid issueId)
     {
         var result = Collection.FindSync(
             comments => comments.IssueId == issueId).ToList();
@@ -84,12 +83,12 @@ public class IssueCommentRepository : Repository<IssueComments>
         return Collection.FindSync(comments => true).ToList();
     }
     
-    public override void Delete(Identifier id)
+    public override void Delete(Guid id)
     {
         Collection.DeleteOne(comments => Equals(comments.IssueId == id));
     }
 
-    public override bool Exists(Identifier id)
+    public override bool Exists(Guid id)
     {
         return Collection.FindSync(comments => Equals(comments.IssueId, id)).Any();
     }

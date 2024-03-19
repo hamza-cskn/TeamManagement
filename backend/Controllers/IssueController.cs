@@ -22,7 +22,8 @@ public class IssueController : ControllerBase
     [HttpPost]
     public IActionResult CreateIssue(Issue.Issue issue)
     {
-        issue.Id = new Issue.Issue.IssueId(Guid.NewGuid());
+        issue.Id = Guid.NewGuid();
+        issue.Status = "Open";
         _repository.Insert(issue);
         return Ok(new{message="Issue successfully created.", issue=issue});
     }
@@ -41,11 +42,10 @@ public class IssueController : ControllerBase
         if (!Guid.TryParse(id, out Guid guid))
             return BadRequest(new {message="Requested url does not represent a valid GUID: " + id});
         
-        Issue.Issue.IssueId issueId = new(guid);
-        if (!_repository.Exists(issueId))
+        if (!_repository.Exists(guid))
             return BadRequest(new {message="Issue with id " + id + " does not exist."});
         
-        var issue = _repository.Load(issueId);
+        var issue = _repository.Load(guid);
         return Ok(new{issue=issue});
     }
     
@@ -64,12 +64,11 @@ public class IssueController : ControllerBase
         if (!Guid.TryParse(id, out Guid guid))
             return BadRequest(new { message = "Requested url does not represent a valid GUID: " + id });
         
-        Issue.Issue.IssueId issueId = new(guid);
-        if (!_repository.Exists(issueId))
+        if (!_repository.Exists(guid))
             return BadRequest(new {message="Issue with id " + id + " does not exist."});
         
-        _repository.Delete(issueId);
-        _commentRepository.Delete(issueId);
+        _repository.Delete(guid);
+        _commentRepository.Delete(guid);
         return Ok(new{message="Issue successfully deleted."});
     }
 }

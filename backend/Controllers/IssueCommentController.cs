@@ -24,9 +24,8 @@ public class IssueCommentController : ControllerBase
         if (!Guid.TryParse(issueId, out Guid issueGuid))
             return BadRequest(new {message="Requested url does not represent a valid GUID: " + issueId});
         
-        var issueIdentifier = new Issue.Issue.IssueId(issueGuid);
-        comment.Id = new CommentId(Guid.NewGuid());
-        _repository.Insert(issueIdentifier, comment);
+        comment.Id = Guid.NewGuid();
+        _repository.Insert(issueGuid, comment);
         return Ok(new{message="Comment successfully created.", comment=comment});
     }
     
@@ -37,14 +36,13 @@ public class IssueCommentController : ControllerBase
         if (!Guid.TryParse(issueId, out Guid issueGuid))
             return BadRequest(new {message="Requested url does not represent a valid GUID: " + issueId});
         
-        var issueIdentifier = new Issue.Issue.IssueId(issueGuid);
-        var issueComments = _repository.Load(issueIdentifier);
+        var issueComments = _repository.Load(issueGuid);
 
         List<Comment> comments = issueComments == null ? new List<Comment>() : issueComments.Comments;
         Console.WriteLine(comments.ToJson());
         var result = comments.Select<Comment, Object>(c =>
         {
-            var id = c.Id!.GetId();
+            var id = c.Id;
             var content = c.Content;
             var writer = c.Writer;
             return new { id, content, writer };
@@ -61,10 +59,9 @@ public class IssueCommentController : ControllerBase
         
         if (!Guid.TryParse(issueId, out Guid issueGuid))
             return BadRequest(new {message="Requested url does not represent a valid GUID: " + issueId});
-        
-        comment.Id = new CommentId(guid);
-        var issueIdentifier = new Issue.Issue.IssueId(issueGuid);
-        bool success = _repository.Update(issueIdentifier, comment);
+
+        comment.Id = guid;
+        bool success = _repository.Update(issueGuid, comment);
         if (!success)
             return BadRequest(new {message="An error occurred while updating the comment."});
         return Ok(new{message="Comment successfully updated."});

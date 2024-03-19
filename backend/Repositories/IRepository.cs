@@ -8,8 +8,8 @@ public interface IRepository<T>
     void Insert(T comments);
     void Update(IEnumerable<T> objs);
     void Update(T obj);
-    T Load(Identifier id);
+    T Load(Guid id);
     List<T> LoadAll();
-    void Delete(Identifier id);
-    bool Exists(Identifier id);
+    void Delete(Guid id);
+    bool Exists(Guid id);
 }

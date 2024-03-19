@@ -27,7 +27,7 @@ public class AuthController : ControllerBase
             return BadRequest(new {message=$"User with '{user.Mail}' mail already exists."});
         }
 
-        user.Id = new UserId(Guid.NewGuid());
+        user.Id = Guid.NewGuid();
         
         _repository.Insert(user);
         var token = _authService.GenerateToken(user);

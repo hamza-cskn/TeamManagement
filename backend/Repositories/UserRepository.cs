@@ -41,7 +41,7 @@ public class UserRepository : Repository<User.User>
         Collection.UpdateOne(user => user.Equals(obj), update);
     }
 
-    public override User.User Load(Identifier id)
+    public override User.User Load(Guid id)
     {
         return Collection.FindSync(user => user.Id.Equals(id)).First();
     }
@@ -51,12 +51,12 @@ public class UserRepository : Repository<User.User>
         return Collection.FindSync(user => true).ToList();
     }
 
-    public override void Delete(Identifier id)
+    public override void Delete(Guid id)
     {
         Collection.DeleteOne(user => Equals(user.Id, id));
     }
     
-    public override bool Exists(Identifier id)
+    public override bool Exists(Guid id)
     {
         return Collection.FindSync(user => Equals(user.Id, id)).Any();
     }

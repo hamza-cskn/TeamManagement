@@ -43,7 +43,7 @@ public class IssueRepository : Repository<Issue.Issue>
         Collection.UpdateOne(issue => issue.Equals(obj), update);
     }
 
-    public override Issue.Issue Load(Identifier id)
+    public override Issue.Issue Load(Guid id)
     {
         return Collection.FindSync(issue => Equals(issue.Id, id)).First();
     }
@@ -53,12 +53,12 @@ public class IssueRepository : Repository<Issue.Issue>
         return Collection.FindSync(issue => true).ToList();
     }
 
-    public override void Delete(Identifier id)
+    public override void Delete(Guid id)
     {
         Collection.DeleteOne(issue => Equals(issue.Id, id));
     }
 
-    public override bool Exists(Identifier id)
+    public override bool Exists(Guid id)
     {
         return Collection.FindSync(issue => issue.Id.Equals(id)).Any();
     }

@@ -1,5 +1,4 @@
 using backend.Repositories;
-using backend.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -30,7 +29,6 @@ public class UserController : ControllerBase
         if (!Guid.TryParse(id, out Guid guid))
             return BadRequest(new {message="Requested url does not represent a valid GUID: " + id});
         
-        UserId userId = new(guid);
-        return Ok(new{users=_repository.Load(userId)});
+        return Ok(new{users=_repository.Load(guid)});
     }
 }
