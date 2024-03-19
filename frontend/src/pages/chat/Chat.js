@@ -55,12 +55,12 @@ export function Chat() {
         return <LoadingComponent message={"Connecting..."}/>
     const user = {name: {name: "Hamza", surname: "COŞKUN"}};
     return (
-            <div className="pb-8">
+            <div>
                 <div className="flex">
                     <ChatList/>
                     <ChatBox msgList={msgList} user={user}/>
                 </div>
-                <div className="w-full text-center bottom-0 bg-none">
+                <div className="w-full text-center">
                     <InputBox text={text} setText={setText} hubConnection={hubConnection}/>
                     <SendButton text={text} setText={setText} hubConnection={hubConnection}/>
                 </div>
@@ -70,12 +70,23 @@ export function Chat() {
 
 function ChatList() {
     const chatList = [
-        {name: "Hamza COŞKUN", messages: "Hello, how are you?"},
-        {name: "Ahmet KESKİN", messages: "did you broke the system again?"},
-        {name: "Çağatay EREM", messages: "what did you do this time?"},
+        {id: "1", name: "Hamza COŞKUN", messages: "Hello, how are you?"},
+        {id: "2", name: "Çağatay EREM", messages: "test"},
+        {id: "3", name: "Aziz AYDIN", messages: "i need my tea. i will not work until we have tea in the office."},
+        {id: "4", name: "Enes YAPMAZ", messages: "i checked fast api. it is not related with it."},
+        {id: "5", name: "Ahmet KESKIN", messages: "❤️"},
+        {id: "6", name: "Sefa AKDAŞ", messages: "we have to fix the issue immediately. but let me finish my tea first."},
+        {id: "7", name: "Test0", messages: "test"},
+        {id: "8", name: "Test1", messages: "test"},
+        {id: "9", name: "Test2", messages: "test"},
+        {id: "10", name: "Test3", messages: "test"},
+        {id: "11", name: "Test4", messages: "test"},
+        {id: "12", name: "Test5", messages: "test"},
+        {id: "13", name: "Test6", messages: "test"},
+        {id: "14", name: "Test7", messages: "test"},
     ];
     return (<div id="chat-list" style={{height: "65vh"}}
-                 className="w-16 sm:w-1/4 hidden-scrollbar bg-white">
+                 className="w-16 sm:w-1/4 border-b border-gray-100 hidden-scrollbar bg-white">
             <h2 className="font-bold text-sm sm:text-lg text-gray-600 text-center py-5">Chats</h2>
             <div className="flow-root">
                 <ul role="list" className="divide-y divide-gray-100 dark:divide-gray-700">
@@ -107,7 +118,7 @@ function ChatList() {
 function ChatBox({msgList, user}) {
     return (<div id="chat-box" style={{height: "65vh"}}
                  className="w-3/4 pb-4 mb-16 hidden-scrollbar
-             bg-white border-l border-gray-100">
+             bg-gray-100 border-b border-l border-gray-100">
         <h2 className="font-medium text-xl text-gray-400 text-center py-5">Start of the messages</h2>
         <ul>
             {msgList.map((item, index) => {
@@ -123,8 +134,9 @@ function ChatBox({msgList, user}) {
 
 function InputBox({text, setText, hubConnection}) {
     return (
-        <input className="w-1/2 min-w-[260px] bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5
-        dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-0" autoFocus={true}
+        <textarea className="w-1/2 max-w-[760px] bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5
+        dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white focus:outline-none focus:ring-0
+        focus:border-gray-300 resize-none" autoFocus={true}
                value={text}
                placeholder="write a message"
                onChange={(e) => {
@@ -145,16 +157,13 @@ function InputBox({text, setText, hubConnection}) {
 function SendButton({text, setText, hubConnection}) {
     return (
         <button className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300
-    font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700
+    font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700
     focus:outline-none dark:focus:ring-blue-800 m-2"
-                onClick={
-                    () => {
+                onClick={() => {
                         if (text.trim() !== "") {
                             sendMsg(hubConnection, text);
                             setText("");
-                        }
-                    }
-                }>
+                        }}}>
             Send
         </button>
     )

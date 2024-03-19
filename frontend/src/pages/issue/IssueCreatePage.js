@@ -1,10 +1,15 @@
 import {BreadcrumbComponent, FooterComponent, NavbarComponent} from "../../common/Layout";
+import {authorizedFetch} from "../../auth/AuthHandler";
+import {useNavigate} from "react-router-dom";
+import {useState} from "react";
+
+const getFormTitle = () => document.getElementById("title")?.value;
+const getFormDescription = () => document.getElementById("description")?.value;
+const getFormCategory = () => document.getElementById("category")?.value;
+const getFormPriority = () => document.getElementById("priority")?.value;
 
 const setFormDraft = () => {
-    const data = {
-        title: document.getElementById("title").value,
-        description: document.getElementById("description").value
-    }
+    const data = {title: getFormTitle(), description: getFormDescription()}
     localStorage.setItem("formDraft", JSON.stringify(data));
 };
 
@@ -70,12 +75,13 @@ function BackupLoadBanner() {
              className="fixed top-0 start-0 z-50 flex flex-col justify-between w-full p-4 border-b border-gray-200 md:flex-row bg-green-200 dark:bg-gray-700 dark:border-gray-600">
             <div className="mb-4 md:mb-0 md:me-4">
                 <h2 className="mb-1 text-base font-semibold text-gray-900 dark:text-white">Draft loaded</h2>
-                <p className="flex items-center text-sm font-normal text-gray-600 dark:text-gray-400">We found an issue draft on your local. Title and Description fields loaded. Do you want us to clear the form?</p>
+                <p className="flex items-center text-sm font-normal text-gray-600 dark:text-gray-400">We found an issue
+                    draft on your local. Title and Description fields loaded. Do you want us to clear the form?</p>
             </div>
             <div className="flex items-center flex-shrink-0">
                 <button data-dismiss-target="#informational-banner" type="button"
-                    onClick={clearForm}
-                    className="inline-flex items-center justify-center px-3 py-2 me-10 text-xs font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 focus:ring-4 focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-blue-800">
+                        onClick={clearForm}
+                        className="inline-flex items-center justify-center px-3 py-2 me-10 text-xs font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 focus:ring-4 focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-blue-800">
                     Clear Form
                 </button>
                 <button data-dismiss-target="#informational-banner" type="button"
@@ -92,13 +98,13 @@ function BackupLoadBanner() {
     );
 }
 
+
 function CreateForm({backupData}) {
     const categories = ["Bug", "Feature", "Technical Support"];
     const priorities = ["Low", "Medium", "High"];
 
-    setInterval(() => {
-        setFormDraft();
-    }, 5 * 1000);
+    setInterval(setFormDraft, 5 * 1000);
+    const navigate = useNavigate();
 
     return <section className="bg-white dark:bg-gray-900 h-full">
         {(backupData.title !== "" || backupData.description !== "") &&
@@ -114,7 +120,7 @@ function CreateForm({backupData}) {
                         </label>
                         <input type="text" name="title" id="title"
                                className="focus:outline-none bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                               placeholder="Type title of the issue" required="" defaultValue={backupData.title}/>
+                               placeholder="Type title of the issue" required defaultValue={backupData.title}/>
                     </div>
                     <div>
                         <label form="category"
@@ -132,25 +138,27 @@ function CreateForm({backupData}) {
                                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Priority</label>
                         <select id="priority"
                                 className="focus:outline-none bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                                <option>Select priority</option>
-                                {priorities.map((priority, index) => {
-                                    return <option key={index} value={priority}>{priority}</option>
-                                })}
-                            </select>
-                        </div>
-                        <div className="sm:col-span-2">
-                            <label form="description"
-                                   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Description</label>
-                            <textarea id="description" rows="8"
-                                      className="focus:outline-0 min-h-60 block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                      placeholder="Your description here" defaultValue={backupData.description}></textarea>
-                        </div>
+                            <option>Select priority</option>
+                            {priorities.map((priority, index) => {
+                                return <option key={index} value={priority}>{priority}</option>
+                            })}
+                        </select>
                     </div>
-                    <button type="submit"
-                            className="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-white bg-primary-700 rounded-lg focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-900 hover:bg-primary-800">
-                        Submit
-                    </button>
-                </form>
-            </div>
+                    <div className="sm:col-span-2">
+                        <label form="description"
+                               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Description</label>
+                        <textarea id="description" rows="8"
+                                  className="focus:outline-0 min-h-60 block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                  placeholder="Your description here" required
+                                  defaultValue={backupData.description}></textarea>
+                    </div>
+                </div>
+                <button type="submit"
+                        className="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-white bg-primary-700
+                        rounded-lg focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-900 hover:bg-primary-800">
+                    Submit
+                </button>
+            </form>
+        </div>
     </section>
 }

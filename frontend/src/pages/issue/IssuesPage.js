@@ -29,14 +29,11 @@ function IssuesArea() {
         }).catch(err => setError(err));
     }, []);
 
-    if (error) {
+
+    if (error)
         return <ErrorComponent error={error.message} message={"An error occurred while getting issues information"}/>;
-    }
-
-    if (!issues) {
+    if (!issues)
         return <LoadingComponent message={"Loading..."}/>;
-    }
-
     return (
         <div className="bg-white text-center pt-5">
             <h1 className="text-3xl font-bold">Issues</h1>

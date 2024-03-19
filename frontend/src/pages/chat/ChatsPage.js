@@ -10,7 +10,8 @@ export function ChatBubble({user, message}) {
         <div className="flex flex-col min-w-[160px] leading-1.5 p-4 border-gray-200
         bg-blue-600 rounded-e-lg rounded-es-lg dark:bg-gray-700">
             <div className="flex items-center space-x-2 rtl:space-x-reverse">
-                <span className="text-sm font-semibold text-gray-50 dark:text-white">{user.name.name + " " + user.name.surname}</span>
+                <span
+                    className="text-sm font-semibold text-gray-50 dark:text-white">{user.name.name + " " + user.name.surname}</span>
                 <span className="text-sm font-normal text-gray-100 dark:text-gray-400">{dateString}</span>
             </div>
             <p className="text-sm font-normal py-2.5 text-white dark:text-white break-words">
@@ -70,6 +71,5 @@ export function ChatPage() {
         <NavbarComponent currentPage={"Chat"}/>
         <BreadcrumbComponent items={["Chat"]}/>
         <Chat/>
-        <FooterComponent/>
     </div>
 }
