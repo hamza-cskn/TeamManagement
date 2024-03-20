@@ -218,7 +218,7 @@ function TableRow({issue}) {
                 </div>
             </td>
             <td className="px-6 py-4 font-bold text-gray-700 whitespace-nowrap dark:text-white ">
-                <a href={'/issues/' + issue.id.id} className="hover:text-blue-600">
+                <a href={'/issues/' + issue.id} className="hover:text-blue-600">
                     {shortString(issue.title, 70)}
                 </a>
             </td>

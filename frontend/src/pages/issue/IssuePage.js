@@ -90,7 +90,7 @@ function IssueArea({issue, error, comments}) {
             {issue.title}
         </h1>
         <div className="pt-12 pb-12">
-            <IssueBubble content={issue.content.content} writer={{name: "Hamza COŞKUN"}} date={Date.now()} self={true}/>
+            <IssueBubble content={issue.content} writer={{name: "Hamza COŞKUN"}} date={Date.now()} self={true}/>
         </div>
         <div>
             <div>
