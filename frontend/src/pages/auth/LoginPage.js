@@ -19,12 +19,13 @@ function LoginForm() {
         event.preventDefault();
 
         try {
-            const response = await authorizedFetch('http://localhost:5229/auth/register', {
+            const response = await authorizedFetch('http://localhost:5229/auth/login', {
                 method: 'POST',
+                headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
-                        "name": {"name": "string", "surname": "string"},
                         "mail": event.target.email.value,
-                        "permissions": [0]
+                        "password": event.target.password.value,
+                        "permissions": []
                     }
                 )
             });
@@ -44,7 +45,7 @@ function LoginForm() {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+        <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto h-screen lg:py-0">
             <a href="/" className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
                 <img className="w-8 h-8 mr-2" src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg"
                      alt="logo"/>
