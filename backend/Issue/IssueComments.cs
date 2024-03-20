@@ -2,7 +2,6 @@ namespace backend.Issue;
 
 public class IssueComments : Identifiable
 {
-    [BsonId]
     public  List<Comment> Comments { get; set; }
     
     public IssueComments(){}
