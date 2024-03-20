@@ -51,7 +51,6 @@ public abstract class Repository<T> : IRepository<T> where T : Identifiable
 
     public bool Exists(Guid id)
     {
-        var result = Collection.DeleteOne(obj => Equals(obj.Id, id));
-        return result.DeletedCount > 0;
+        return Collection.FindSync(obj => Equals(obj.Id, id)).Any();
     }
 }
