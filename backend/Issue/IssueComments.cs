@@ -1,5 +1,3 @@
-using MongoDB.Bson.Serialization.Attributes;
-
 namespace backend.Issue;
 
 public class IssueComments : Identifiable

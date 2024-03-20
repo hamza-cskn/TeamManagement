@@ -27,9 +27,9 @@ public abstract class Repository<T> : IRepository<T> where T : Identifiable
     protected abstract string GetRepositoryName();
     public abstract void Insert(IEnumerable<T> objs);
 
-    public void Insert(T comments)
+    public void Insert(T obj)
     {
-        Collection.InsertOne(comments);
+        Collection.InsertOne(obj);
     }
     
     public abstract void Update(IEnumerable<T> objs);

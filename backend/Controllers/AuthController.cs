@@ -1,6 +1,5 @@
 using backend.Auth;
 using backend.Repositories;
-using backend.User;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers;
@@ -23,12 +22,10 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     public IActionResult RegisterUser(User.User user)
     {
-        if (_repository.Exists(u => u.Mail == user.Mail)) {
+        if (_repository.Exists(u => u.Mail == user.Mail))
             return BadRequest(new {message=$"User with '{user.Mail}' mail already exists."});
-        }
 
         user.Id = Guid.NewGuid();
-        
         _repository.Insert(user);
         var token = _authService.GenerateToken(user);
         return Ok(new {message="User successfully created.", Token=token});
