@@ -37,7 +37,7 @@ public abstract class Repository<T> : IRepository<T> where T : Identifiable
 
     public T? Load(Guid id)
     {
-        var result = Collection.FindSync(obj => Equals(obj.Id, id));
+        var result = Collection.FindSync(obj => Equals(obj.Id, id)).ToList();
         if (result.Any())
             return result.First();
         return null;
