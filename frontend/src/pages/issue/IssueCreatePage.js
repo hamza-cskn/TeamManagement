@@ -28,7 +28,7 @@ function postIssue(title, content, category, priority) {
         body: JSON.stringify({
             creator: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
             title,
-            content: {content},
+            content,
             category,
             priority
         })
@@ -52,9 +52,9 @@ function handleSubmit(e, navigate) {
             return;
         }
         clearForm();
-        res.json().then(data => {
-            navigate("/issues/" + data.issue.id.id);
-        })
+        /*res.json().then(data => {
+            navigate("/issues/" + data.issue.id);
+        })*/
     }).catch(ex => alert(ex.toString()));
 }
 

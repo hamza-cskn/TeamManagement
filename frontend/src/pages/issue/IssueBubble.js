@@ -13,7 +13,7 @@ export function IssueBubble({content, writer, date, self= false}) {
     return (
         <div className="flex items-start gap-2.5 pl-5">
             <img className="w-8 h-8 rounded-full" src="/docs/images/people/linkedinphoto.jpeg" alt="Profile"/>
-            <div className={`flex flex-col w-full max-w-[640px] leading-1.5 border ${borderColor} bg-white rounded-e-md rounded-es-md dark:bg-gray-700`}>
+            <div className={`flex flex-col w-full max-w-3xl leading-1.5 border ${borderColor} bg-white rounded-e-md rounded-es-md dark:bg-gray-700`}>
                 <div className={`flex items-center space-x-2 pl-4 p-2 rounded-tr-md border-b ${bgColor} ${borderColor}`}>
                     <a href="#" className="text-sm font-semibold text-gray-800 dark:text-white hover:text-blue-600 hover:underline">{writer.name}</a>
                     {date &&

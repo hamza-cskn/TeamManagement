@@ -93,16 +93,14 @@ function IssueArea({issue, error, comments}) {
             <IssueBubble content={issue.content.content} writer={{name: "Hamza COŞKUN"}} date={Date.now()} self={true}/>
         </div>
         <div>
-            <div className="editor">
-                <Editor data={data} onChange={setData} editorblock="editorjs-container"/>
-                <button
-                    className="savebtn"
-                    onClick={() => {
-                        alert(JSON.stringify(data));
-                    }}
-                >
-                    Save
-                </button>
+            <div>
+                <div className="mx-auto ml-16 max-w-3xl">
+                    <Editor data={data} onChange={setData} editorblock="editorjs-container"
+                            className="px-5 pb-6 pt-4 border border-gray-200 bg-gray-50 rounded-lg w-full text-base"/>
+                    <button className="float-right my-3 h-12 w-24 border rounded-lg border-blue-850 bg-blue-500 text-white font-medium">
+                        Save
+                    </button>
+                </div>
             </div>
         </div>
     </div>
