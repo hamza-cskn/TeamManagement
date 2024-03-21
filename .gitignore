@@ -3,3 +3,4 @@ backend/obj
 backend/bin
 *.DS_Store
 *.idea/
+backend/appsettings.Development.json
