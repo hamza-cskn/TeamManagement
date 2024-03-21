@@ -21,6 +21,7 @@ public class UserRepository : Repository<User.User>
     {
         Collection.InsertMany(objs);
     }
+    
     public override void Update(IEnumerable<User.User> objs)
     {
         foreach (var user in objs)

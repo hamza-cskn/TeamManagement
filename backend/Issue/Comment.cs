@@ -1,4 +1,3 @@
-
 namespace backend.Issue;
 
 public record Comment(string? Content, Guid? Writer)
