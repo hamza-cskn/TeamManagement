@@ -9,7 +9,7 @@ import PrivateRoutes from "./pages/auth/PrivateRoute";
 import {ChatPage} from "./pages/chat/ChatsPage";
 import {IssueCreatePage} from "./pages/issue/IssueCreatePage";
 import {LogoutPage} from "./pages/auth/LogoutPage";
-import {UsersPage} from "./pages/Users/UsersPage";
+import {UsersPage} from "./pages/users/UsersPage";
 
 function App() {
     return (

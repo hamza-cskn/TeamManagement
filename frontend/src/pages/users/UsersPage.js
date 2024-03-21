@@ -4,7 +4,7 @@ export function UsersPage() {
     return (
     <section>
         <NavbarComponent/>
-        <BreadcrumbComponent items={["Users"]}/>
+        <BreadcrumbComponent items={["users"]}/>
         <div className="min-h-screen">
             <UsersArea/>
         </div>
