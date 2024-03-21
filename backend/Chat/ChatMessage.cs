@@ -1,8 +1,13 @@
 namespace backend.Chat;
 
-public class ChatMessage
+public class ChatMessage : Identifiable
 {
-    Guid Id { get; }
-    Guid ChatId { get; }
-    string Content { get; }
+    public string Content { get; set; }
+    
+    public ChatMessage(string content)
+    {
+        Content = content;
+    }
+
+
 }
