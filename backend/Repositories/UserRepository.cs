@@ -41,6 +41,14 @@ public class UserRepository : Repository<User.User>
         return Collection.FindSync(user => true).ToList();
     }
     
+    public User.User? LoadByMail(string mail)
+    {
+        var result = Collection.FindSync(user => user.Mail == mail).ToList();
+        if (result.Any())
+            return result.First();
+        return null;
+    }
+    
     public List<User.User> LoadAll(Expression<Func<User.User, bool>> filter)
     {
         return Collection.FindSync(filter).ToList();
