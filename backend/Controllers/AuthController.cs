@@ -1,5 +1,7 @@
 using backend.Auth;
 using backend.Repositories;
+using backend.User;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers;
@@ -19,12 +21,21 @@ public class AuthController : ControllerBase
         _authService = authService;
     }
 
+    [Authorize]
     [HttpPost("register")]
-    public IActionResult RegisterUser(User.User user)
+    public IActionResult RegisterUser(LoginDto loginDto)
     {
-        if (_repository.Exists(u => u.Mail == user.Mail))
-            return BadRequest(new {message=$"User with '{user.Mail}' mail already exists."});
+        //todo mail regex check
+        if (_repository.Exists(u => u.Mail == loginDto.Mail))
+            return BadRequest(new {message=$"User with '{loginDto.Mail}' mail already exists."});
 
+        var user = new User.User
+        {
+            Mail = loginDto.Mail,
+            Password = loginDto.Password, 
+            Name = new UserName {Name="John", Surname="Doe"},
+            Permissions = new List<UserPermission>()
+        };
         user.Id = Guid.NewGuid();
         _repository.Insert(user);
         var token = _authService.GenerateToken(user);
@@ -32,11 +43,16 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
-    public IActionResult LoginUser(User.User user)
+    public IActionResult LoginUser(LoginDto loginDto)
     {
-        if (!_repository.Exists(u => u.Mail == user.Mail)) {
-            return BadRequest(new {message=$"User with '{user.Mail}' mail does not exist."});
-        }
+        //todo mail regex check, should i?
+        var user = _repository.LoadByMail(loginDto.Mail);
+        if (user == null)
+            return BadRequest(new {message=$"User with '{loginDto.Mail}' mail does not exist."});
+
+        if (user.Password != loginDto.Password) //todo hash passwords
+            return BadRequest(new {message="Invalid password."});
+        
         var token = _authService.GenerateToken(user);
         return Ok(new {message="User successfully logged in.",Token=token});
     } 
