@@ -4,3 +4,7 @@ backend/bin
 *.DS_Store
 *.idea/
 backend/appsettings.Development.json
+.env
+backend/.env
+frontend/.env
+*/.env

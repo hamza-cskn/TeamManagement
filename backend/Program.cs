@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
 
+LoadDotEnv(".env");
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -26,7 +27,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(opts => PrepareJwtOptions(jwtOptions, opts));
 builder.Services.AddAuthorization();
 
-builder.Services.AddSingleton(new MongoClient("mongodb://root:secret@3.80.108.237:27017/")); // todo - do not use in-build urls
+var uri = Environment.GetEnvironmentVariable("MONGO_URI");
+builder.Services.AddSingleton(new MongoClient(uri));
 
 builder.Services.AddCors(options =>
 {
@@ -72,3 +74,22 @@ static void PrepareJwtOptions(JwtOptions jwtOptions, JwtBearerOptions opts)
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SigningKey))
     };
 }
+
+
+static void LoadDotEnv(string filePath)
+{
+    if (!File.Exists(filePath))
+        return;
+
+    foreach (var line in File.ReadAllLines(filePath))
+    {
+        var parts = line.Split('=', StringSplitOptions.RemoveEmptyEntries);
+
+        if (parts.Length != 2)
+            continue;
+        
+        if (Environment.GetEnvironmentVariable(parts[0]) == null)
+            Environment.SetEnvironmentVariable(parts[0], parts[1]);
+    }
+}
+
