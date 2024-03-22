@@ -23,23 +23,18 @@ public class AuthController : ControllerBase
 
     [Authorize]
     [HttpPost("register")]
-    public IActionResult RegisterUser(LoginDto loginDto)
+    public IActionResult RegisterUser(User.User user)
     {
         //todo mail regex check
-        if (_repository.Exists(u => u.Mail == loginDto.Mail))
-            return BadRequest(new {message=$"User with '{loginDto.Mail}' mail already exists."});
-
-        var user = new User.User
-        {
-            Mail = loginDto.Mail,
-            Password = loginDto.Password, 
-            Name = new UserName {Name="John", Surname="Doe"},
-            Permissions = new List<UserPermission>()
-        };
+        if (_repository.Exists(u => u.Mail == user.Mail))
+            return BadRequest(new {message=$"User with '{user.Mail}' mail already exists."});
+        
+        if (user.Password == null)
+            return BadRequest(new {message="Password cannot be null."});
+        
         user.Id = Guid.NewGuid();
         _repository.Insert(user);
-        var token = _authService.GenerateToken(user);
-        return Ok(new {message="User successfully created.", Token=token});
+        return Ok(new {message="User successfully created."});
     }
 
     [HttpPost("login")]
