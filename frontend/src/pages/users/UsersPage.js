@@ -4,7 +4,7 @@ export function UsersPage() {
     return (
     <section>
         <NavbarComponent/>
-        <BreadcrumbComponent items={["users"]}/>
+        <BreadcrumbComponent items={["Users"]}/>
         <div className="min-h-screen">
             <UsersArea/>
         </div>
@@ -12,7 +12,8 @@ export function UsersPage() {
     </section>)
 }
 
-function UsersArea() {
+function UsersArea()
+{
     const users = [
         {name: {name: "John", surname: "Doe"}, mail: "johndoe@mail.com"},
         {name: {name: "Micheal", surname: "Doe"}, mail: "janedoe@mail.com"},
@@ -24,7 +25,7 @@ function UsersArea() {
     ]
     return (
         <div className="mt-16 mb-16">
-            <ul className="grid w-full sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 grid-cols-1 gap-y-8">
+            <ul className="grid w-full sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 grid-cols-1 gap-y-24">
                 {users.map((user, index) => {
                     return <UserCard user={user}/>
                 })}
@@ -39,10 +40,8 @@ function UserCard({user}) {
             <div className="flex justify-end px-4 pt-4">
                 <button id="dropdownButton" data-dropdown-toggle="dropdown" className="inline-block text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-1.5" type="button">
                     <span className="sr-only">Open dropdown</span>
-                    <svg className="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-                         viewBox="0 0 16 3">
-                        <path
-                            d="M2 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm6.041 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM14 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z"/>
+                    <svg className="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 3">
+                        <path d="M2 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm6.041 0a1.5 1.5 0 1 1 0 3 1.5 21.5 0 0 1 0-3ZM14 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z"/>
                     </svg>
                 </button>
                 <div id="dropdown" className="z-10 hidden text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">

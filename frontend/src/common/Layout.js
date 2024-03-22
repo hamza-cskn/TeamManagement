@@ -1,13 +1,12 @@
-import { Footer } from 'flowbite-react';
-import { BsDribbble, BsFacebook, BsGithub, BsInstagram, BsTwitter } from 'react-icons/bs';
-import { Breadcrumb } from 'flowbite-react';
-import { HiHome } from 'react-icons/hi';
+import {Breadcrumb, Footer} from 'flowbite-react';
+import {BsDribbble, BsFacebook, BsGithub, BsInstagram, BsTwitter} from 'react-icons/bs';
+import {HiHome} from 'react-icons/hi';
 
 export function NavbarComponent({currentPage, pages}) {
     if (!pages) pages = [
-        {name: "Home", href:"/"},
+        {name: "Home", href: "/"},
         {name: "Issues", href: "/issues"},
-        {name: "Chat", href:"/chat"},
+        {name: "Chat", href: "/chat"},
         {name: "Users", href: "/users"},
     ];
 
@@ -16,23 +15,32 @@ export function NavbarComponent({currentPage, pages}) {
             <nav className="bg-white border-gray-200 dark:bg-gray-900">
                 <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
                     <a href="https://flowbite.com/" className="flex items-center space-x-3 rtl:space-x-reverse">
-                        <img src="https://flowbite.com/docs/images/logo.svg" className="h-8" alt="Flowbite Logo" />
+                        <img src="https://flowbite.com/docs/images/logo.svg" className="h-8" alt="Flowbite Logo"/>
                         <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Team Management</span>
                     </a>
                     <div className="flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
-                        <button type="button" className="flex text-sm bg-gray-800 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
+                        <button type="button"
+                                className="flex text-sm bg-gray-800 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
+                                id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown"
+                                data-dropdown-placement="bottom">
                             <span className="sr-only">Open user menu</span>
-                            <img className="w-8 h-8 rounded-full" src="/docs/images/people/linkedinphoto.jpeg" alt="user"/>
+                            <img className="w-8 h-8 rounded-full" src="/docs/images/people/linkedinphoto.jpeg"
+                                 alt="user"/>
                         </button>
                         <ProfileMenu/>
-                        <button data-collapse-toggle="navbar-user" type="button" className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-user" aria-expanded="false">
+                        <button data-collapse-toggle="navbar-user" type="button"
+                                className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+                                aria-controls="navbar-user" aria-expanded="false">
                             <span className="sr-only">Open main menu</span>
-                            <svg className="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
-                                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 1h15M1 7h15M1 13h15"/>
+                            <svg className="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                 viewBox="0 0 17 14">
+                                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                                      d="M1 1h15M1 7h15M1 13h15"/>
                             </svg>
                         </button>
                     </div>
-                    <div className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-user">
+                    <div className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1"
+                         id="navbar-user">
                         <ul className="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
                             {pages.map((page, index) => (
                                 <li key={index}>
@@ -120,13 +128,13 @@ export function FooterComponent() {
                     </div>
                 </div>
                 <div className="w-full bg-gray-700 px-4 py-6 sm:flex sm:items-center sm:justify-between">
-                    <Footer.Copyright href="#" by="Flowbite™" year={2022} />
+                    <Footer.Copyright href="#" by="Flowbite™" year={2022}/>
                     <div className="mt-4 flex space-x-6 sm:mt-0 sm:justify-center">
-                        <Footer.Icon href="#" icon={BsFacebook} />
-                        <Footer.Icon href="#" icon={BsInstagram} />
-                        <Footer.Icon href="#" icon={BsTwitter} />
-                        <Footer.Icon href="#" icon={BsGithub} />
-                        <Footer.Icon href="#" icon={BsDribbble} />
+                        <Footer.Icon href="#" icon={BsFacebook}/>
+                        <Footer.Icon href="#" icon={BsInstagram}/>
+                        <Footer.Icon href="#" icon={BsTwitter}/>
+                        <Footer.Icon href="#" icon={BsGithub}/>
+                        <Footer.Icon href="#" icon={BsDribbble}/>
                     </div>
                 </div>
             </div>
@@ -147,5 +155,48 @@ export function BreadcrumbComponent({items}) {
             ))}
         </Breadcrumb>
     );
+}
+
+export function Stepper({steps, currentStep}) {
+    return <ol
+        className="hidden lg:grid lg:grid-cols-3 gap-4 sm:grid-cols-1 items-center w-full text-sm font-medium text-center text-gray-500 dark:text-gray-400 sm:text-base">
+        {steps.map((step, index) => (
+            <Step key={index} number={index + 1} title={step.title} subtitle={step.subtitle} isCompleted={index <= currentStep} isLast={index === steps.length - 1}/>
+        ))}
+
+    </ol>
+}
+
+function Step({number, title, subtitle, isCompleted, isLast}) {
+    let span;
+    let extra;
+
+    if (isCompleted) {
+        span = (<svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 me-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                     fill="currentColor" viewBox="0 0 20 20">
+            <path
+                d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
+        </svg>);
+        extra = "text-blue-600 dark:text-blue-500"
+    } else {
+        span = <span className="me-2">{number}</span>;
+        extra = ""
+    }
+
+    if (isLast) {
+        return <li className={`md:mx-0 sm:mx-auto flex items-center ${extra}`}>
+            {span}
+            {title}
+        </li>
+    }
+
+    return <li
+        className={`md:mx-0 sm:mx-auto flex items-center after:content-[''] after:w-full after:h-1 after:border-b after:border-gray-200 after:border-1 after:hidden sm:after:inline-block after:mx-6 xl:after:mx-10 ${extra}`}>
+        <span
+            className={`flex items-center after:content-[''] sm:after:hidden after:mx-2 after:text-gray-200 dark:after:text-gray-500 ${extra}`}>
+            {span}
+        </span>
+        {title}
+    </li>
 }
 
