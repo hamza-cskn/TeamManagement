@@ -1,7 +1,6 @@
 import {BreadcrumbComponent, FooterComponent, NavbarComponent} from "../../common/Layout";
 import {authorizedFetch} from "../../auth/AuthHandler";
 import {useNavigate} from "react-router-dom";
-import {useState} from "react";
 
 const getFormTitle = () => document.getElementById("title")?.value;
 const getFormDescription = () => document.getElementById("description")?.value;
@@ -52,9 +51,9 @@ function handleSubmit(e, navigate) {
             return;
         }
         clearForm();
-        /*res.json().then(data => {
+        res.json().then(data => {
             navigate("/issues/" + data.issue.id);
-        })*/
+        })
     }).catch(ex => alert(ex.toString()));
 }
 
