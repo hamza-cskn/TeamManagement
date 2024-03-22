@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {HubConnectionBuilder} from "@microsoft/signalr";
 import {ChatBubble} from "./ChatsPage";
 import "../../App.css";
@@ -7,24 +7,52 @@ import {ErrorComponent, LoadingComponent} from "../../auth/FetchStates";
 
 let isConnectionCreated = false;
 
-async function createHubConnection(setHubConnection, setError) {
+async function connectHubAsync(setHubConnection, setError) {
     if (isConnectionCreated)
         return;
     isConnectionCreated = true;
     const hubCn = new HubConnectionBuilder().withUrl("http://localhost:5229/chathub").build()
     hubCn.start()
-        .then(() => {
-            console.log("connid:", hubCn.connectionId);
-            setHubConnection(hubCn);
-        })
+        .then(() => setHubConnection(hubCn))
         .catch((e) => {
             console.error(e);
             setError(e.message);
         });
 }
 
+function loadMoreMessages(setMsgList, count) {
+
+}
+
+function listenHub(hubConnection, setMsgList) {
+    if (hubConnection) {
+        hubConnection.on("ReceiveMessage", (msg) => {
+            setMsgList((prevState) => {
+                return prevState.concat(msg)
+            })
+            const chatBox = document.getElementById("chat-box");
+            setTimeout(() => {
+                chatBox.scrollTo(0, chatBox.scrollHeight);
+            }, 10);
+        });
+        hubConnection.invoke("ClientReady");
+    }
+
+}
+
 function sendMsg(hubConnection, text) {
     hubConnection?.invoke("SendMessage", text);
+}
+
+function listenScrollTop(setMsgList, divRef) {
+    const divElement = divRef.current;
+    const handleScroll = () => {
+        if (divElement.scrollTop === 0) {
+            loadMoreMessages(setMsgList, 10);
+        }
+    };
+    divElement.addEventListener('scroll', handleScroll);
+    return () => divElement.removeEventListener('scroll', handleScroll);
 }
 
 export function Chat() {
@@ -32,23 +60,12 @@ export function Chat() {
     const [msgList, setMsgList] = useState([]);
     const [hubConnection, setHubConnection] = useState(undefined);
     const [error, setError] = useState(undefined);
-    useEffect(() => {
-        createHubConnection(setHubConnection, setError);
-    }, []);
 
     useEffect(() => {
-        if (hubConnection) {
-            hubConnection.on("ReceiveMessage", (msg) => {
-                setMsgList((prevState) => {
-                    return prevState.concat(msg)
-                })
-                const chatBox = document.getElementById("chat-box");
-                setTimeout(() => {
-                    chatBox.scrollTo(0, chatBox.scrollHeight);
-                }, 10);
-            })
-        }
-    }, [hubConnection])
+        connectHubAsync(setHubConnection, setError);
+    }, [setHubConnection, setError]);
+    useEffect(() => listenHub(hubConnection, setMsgList), [hubConnection, setMsgList])
+
     if (error)
         return <ErrorComponent message={"Could not connected to the server."} error={error}/>
     if (!hubConnection)
@@ -85,10 +102,10 @@ function ChatList() {
         {id: "13", name: "Test6", messages: "test"},
         {id: "14", name: "Test7", messages: "test"},
     ];
-    return (<div id="chat-list" style={{height: "65vh"}}
+    return <div id="chat-list" style={{height: "65vh"}}
                  className="w-16 sm:w-1/4 border-b border-gray-100 hidden-scrollbar bg-white">
             <h2 className="font-bold text-sm sm:text-lg text-gray-600 text-center py-5">Chats</h2>
-            <div className="flow-root">
+            <div className="flow-root overflow-x-hidden">
                 <ul role="list" className="divide-y divide-gray-100 dark:divide-gray-700">
                     {chatList.map((item, index) => {
                         return <li className="py-2.5 hover:bg-gray-100 hover:cursor-pointer px-5">
@@ -112,14 +129,19 @@ function ChatList() {
                 </ul>
             </div>
         </div>
-    )
 }
 
-function ChatBox({msgList, user}) {
-    return (<div id="chat-box" style={{height: "65vh"}}
-                 className="w-3/4 pb-4 mb-16 hidden-scrollbar
+function ChatBox({msgList, setMsgList, user}) {
+    const divRef = useRef(null);
+    useEffect(() => listenScrollTop(setMsgList, divRef), [setMsgList]);
+
+    return (<div ref={divRef} id="chat-box" style={{height: "65vh"}}
+                 className="w-full pb-4 mb-16 hidden-scrollbar
              bg-gray-100 border-b border-l border-gray-100">
-        <h2 className="font-medium text-xl text-gray-400 text-center py-5">Start of the messages</h2>
+
+        <h2 className="font-medium text-xl text-gray-400 text-center my-5">Loading...</h2>
+        <h2 className="font-medium text-xl text-gray-400 text-center my-5">Start of the messages</h2>
+
         <ul>
             {msgList.map((item, index) => {
                 return (
