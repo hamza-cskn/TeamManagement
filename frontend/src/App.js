@@ -10,6 +10,7 @@ import {ChatPage} from "./pages/chat/ChatsPage";
 import {IssueCreatePage} from "./pages/issue/IssueCreatePage";
 import {LogoutPage} from "./pages/auth/LogoutPage";
 import {UsersPage} from "./pages/users/UsersPage";
+import {UserCreatePage} from "./pages/users/UserCreatePage";
 
 function App() {
     return (
@@ -23,6 +24,7 @@ function App() {
                     <Route path="/chat" element={<ChatPage/>}/>
                     <Route path="/logout" element={<LogoutPage/>}/>
                     <Route path="/users" element={<UsersPage/>}/>
+                    <Route path="/users/create" element={<UserCreatePage/>}/>
                 </Route>
                 <Route path="*" element={<NotFoundPage/>}/>
                 <Route path="/login" element={<LoginPage/>}/>
