@@ -4,6 +4,7 @@ import {ChatBubble} from "./ChatsPage";
 import "../../App.css";
 import {shortString} from "../issue/IssuePage";
 import {ErrorComponent, LoadingComponent} from "../../auth/FetchStates";
+import {getToken} from "../../auth/AuthHandler";
 
 let isConnectionCreated = false;
 
@@ -21,27 +22,28 @@ async function connectHubAsync(setHubConnection, setError) {
 }
 
 function loadMoreMessages(setMsgList, count) {
-
+    setMsgList([]); //TODO: get from server
 }
 
 function listenHub(hubConnection, setMsgList) {
     if (hubConnection) {
         hubConnection.on("ReceiveMessage", (msg) => {
-            setMsgList((prevState) => {
-                return prevState.concat(msg)
-            })
+            setMsgList((prevState) => prevState.concat(msg))
             const chatBox = document.getElementById("chat-box");
             setTimeout(() => {
                 chatBox.scrollTo(0, chatBox.scrollHeight);
             }, 10);
         });
         hubConnection.invoke("ClientReady");
+        hubConnection.on("MessageError", (msg) => {
+           console.error(msg); //TODO: show error message
+        });
     }
 
 }
 
 function sendMsg(hubConnection, text) {
-    hubConnection?.invoke("SendMessage", text);
+    hubConnection?.invoke("SendMessage", getToken(), "1", text);
 }
 
 function listenScrollTop(setMsgList, divRef) {
@@ -74,7 +76,7 @@ export function Chat() {
     return (
             <div>
                 <div className="flex">
-                    <ChatList/>
+                    <ChatList setMsgList={setMsgList} />
                     <ChatBox msgList={msgList} user={user}/>
                 </div>
                 <div className="w-full text-center">
@@ -85,7 +87,8 @@ export function Chat() {
     );
 }
 
-function ChatList() {
+function ChatList({setMsgList}) {
+    const [currentChat, setCurrentChat] = useState("1"); //TODO: get from local storage
     const chatList = [
         {id: "1", name: "Hamza COŞKUN", messages: "Hello, how are you?"},
         {id: "2", name: "Çağatay EREM", messages: "test"},
@@ -102,33 +105,41 @@ function ChatList() {
         {id: "13", name: "Test6", messages: "test"},
         {id: "14", name: "Test7", messages: "test"},
     ];
+
     return <div id="chat-list" style={{height: "65vh"}}
                  className="w-16 sm:w-1/4 border-b border-gray-100 hidden-scrollbar bg-white">
             <h2 className="font-bold text-sm sm:text-lg text-gray-600 text-center py-5">Chats</h2>
             <div className="flow-root overflow-x-hidden">
                 <ul role="list" className="divide-y divide-gray-100 dark:divide-gray-700">
                     {chatList.map((item, index) => {
-                        return <li className="py-2.5 hover:bg-gray-100 hover:cursor-pointer px-5">
-                            <div className="flex items-center">
-                                <div className="flex-shrink-0 mx-auto sm:mx-0">
-                                    <img className="w-5 h-5 sm:w-8 sm:h-8 rounded-full" src="/docs/images/people/profile.png"
-                                         alt="Thomas image"/>
-                                </div>
-                                <div className="sm:block hidden flex-1 min-w-0 ms-4">
-                                    <p className="text-sm font-medium text-gray-900 truncate dark:text-white">
-                                        {item.name}
-                                    </p>
-                                    <div
-                                        className="inline-flex truncate items-center text-sm font-normal text-gray-700 dark:text-white">
-                                        {shortString(item.messages, 30)}
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
+                        return <ChatListNode item={item} setMsgList={setMsgList} currentChat={currentChat} setCurrentChat={setCurrentChat}/>
                     })}
                 </ul>
             </div>
         </div>
+}
+
+function ChatListNode({item, setMsgList, currentChat, setCurrentChat}) {
+    return <li
+        onClick={() => {
+            setCurrentChat(item.id);
+            loadMoreMessages(setMsgList, 10);
+        }}
+        className={`py-2.5 hover:bg-purple-50 hover:cursor-pointer px-5 ` + (currentChat === item.id ? "bg-purple-100" : "")}>
+        <div className="flex items-center">
+            <div className="flex-shrink-0 mx-auto sm:mx-0">
+                <img className="w-5 h-5 sm:w-8 sm:h-8 rounded-full" src="/docs/images/people/profile.png" alt="Thomas image"/>
+            </div>
+            <div className="sm:block hidden flex-1 min-w-0 ms-4">
+                <p className="text-sm font-medium text-gray-900 truncate dark:text-white">
+                    {item.name}
+                </p>
+                <div className="inline-flex truncate items-center text-sm font-normal text-gray-700 dark:text-white">
+                    {shortString(item.messages, 30)}
+                </div>
+            </div>
+        </div>
+    </li>
 }
 
 function ChatBox({msgList, setMsgList, user}) {
@@ -159,21 +170,19 @@ function InputBox({text, setText, hubConnection}) {
         <textarea className="w-1/2 max-w-[760px] bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5
         dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white focus:outline-none focus:ring-0
         focus:border-gray-300 resize-none" autoFocus={true}
-               value={text}
-               placeholder="write a message"
-               onChange={(e) => {
-                   setText(e.target.value)
-               }}
-               onKeyDown={(e) => {
-                   if (e.key === "Enter" && !e.shiftKey && text.trim() !== "")
-                   {
-                       e.preventDefault();
-                       sendMsg(hubConnection, text);
-                       setText("");
-                   }
-               }}
-        />
-    )
+                  value={text}
+                  placeholder="write a message"
+                  onChange={(e) => {
+                      setText(e.target.value)
+                  }}
+                  onKeyDown={(e) => {
+                      if (e.key === "Enter" && !e.shiftKey && text.trim() !== "") {
+                          e.preventDefault();
+                          sendMsg(hubConnection, text);
+                          setText("");
+                      }
+                  }}
+        />)
 }
 
 function SendButton({text, setText, hubConnection}) {
