@@ -15,8 +15,4 @@ public class User : Identifiable
     
     public User() {}
 
-    public override bool Equals(object? obj)
-    {
-        return obj is User user && user.Id.Equals(Id);
-    }
 }
