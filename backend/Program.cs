@@ -19,6 +19,8 @@ builder.Services.AddSingleton<IssueRepository>();
 builder.Services.AddSingleton<AuthService>();
 builder.Services.AddSingleton(builder.Configuration);
 builder.Services.AddSingleton<IssueCommentRepository>();
+builder.Services.AddSingleton<ChatMessageRepository>();
+builder.Services.AddSingleton<ChatRoomRepository>();
 
 var jwtOptions = builder.Configuration.GetSection("JwtOptions").Get<JwtOptions>()!;
 builder.Services.AddSingleton(jwtOptions);

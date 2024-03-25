@@ -33,7 +33,7 @@ public class ChatHub : Hub
         
         Console.WriteLine($"Message sent by {claim.Value} to {room}: {message}");
         await Clients.All.SendAsync("ReceiveMessage", message);
-        _messages.Add(message);
+        _repository.Insert(new ChatMessage(Guid.NewGuid(), Guid.NewGuid(), message, DateTime.Now));
     }
 
     public override async Task OnConnectedAsync()
