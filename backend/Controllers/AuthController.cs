@@ -50,5 +50,5 @@ public class AuthController : ControllerBase
         
         var token = _authService.GenerateToken(user);
         return Ok(new {message="User successfully logged in.",Token=token});
-    } 
+    }
 }

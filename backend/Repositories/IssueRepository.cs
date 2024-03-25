@@ -36,6 +36,7 @@ public class IssueRepository : Repository<Issue.Issue>
             .Set(issue => issue.Status, obj.Status)
             .Set(issue => issue.Assignees, obj.Assignees);
         Collection.UpdateOne(issue => issue.Equals(obj), update);
+        
     }
     
     public override List<Issue.Issue> LoadAll()
