@@ -43,10 +43,13 @@ public class AuthService
 
     private IEnumerable<Claim> PrepareClaims(User.User user)
     {
+        if (user.Id == null)
+            throw new Exception("unknown user id.");
         var claims = new List<Claim>
         {
-            new("name", user.Name.Surname),
+            new("name", user.Name.Name),
             new("username", user.Name.Surname),
+            new("id", user.Id.ToString()),
             new("aud", _jwtOptions.Audience)
         };
     
