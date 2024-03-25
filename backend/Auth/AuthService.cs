@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
 namespace backend.Auth;
@@ -57,5 +58,33 @@ public class AuthService
             .Select(p => new Claim("role", p.ToString()));
         claims.AddRange(roleClaims);
         return claims;
+    }
+    
+    public ClaimsPrincipal? ValidateToken(string token)
+    {
+        var tokenValidationParameters = GetJwtParameters(_jwtOptions);
+        
+        try
+        {
+            return _tokenHandler.ValidateToken(token, tokenValidationParameters, out _);
+        }
+        catch
+        {
+            return null;
+        }
+    }
+    
+    public static TokenValidationParameters GetJwtParameters(JwtOptions jwtOptions)
+    {
+        return new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtOptions.Issuer,
+            ValidAudience = jwtOptions.Audience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SigningKey))
+        };
     }
 }
