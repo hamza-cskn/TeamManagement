@@ -1,9 +1,7 @@
-using System.Text;
 using backend.Auth;
 using backend.Chat;
 using backend.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
 
 LoadDotEnv(".env");
@@ -26,7 +24,7 @@ var jwtOptions = builder.Configuration.GetSection("JwtOptions").Get<JwtOptions>(
 builder.Services.AddSingleton(jwtOptions);
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(opts => PrepareJwtOptions(jwtOptions, opts));
+    .AddJwtBearer(opts => opts.TokenValidationParameters = AuthService.GetJwtParameters(jwtOptions));
 builder.Services.AddAuthorization();
 
 var uri = Environment.GetEnvironmentVariable("MONGO_URI");
@@ -62,21 +60,6 @@ app.MapControllers();
 app.MapHub<ChatHub>("/chathub");
 
 app.Run();
-
-static void PrepareJwtOptions(JwtOptions jwtOptions, JwtBearerOptions opts)
-{
-    opts.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = jwtOptions.Issuer,
-        ValidAudience = jwtOptions.Audience,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SigningKey))
-    };
-}
-
 
 static void LoadDotEnv(string filePath)
 {
