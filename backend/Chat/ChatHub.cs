@@ -42,10 +42,9 @@ public class ChatHub : Hub
         await Clients.Client(Context.ConnectionId).SendAsync("RequestReadySignal");
     }
 
-    public async Task ClientReady()
+    public Task ClientReady()
     {
-        var client = Clients.Client(Context.ConnectionId);
-        foreach (var message in _messages)
-            await client.SendAsync("ReceiveMessage", message);
+        //do nothing
+        return Task.CompletedTask;
     }
 }
