@@ -1,4 +1,5 @@
 using backend.Chat;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace backend.Repositories;
@@ -25,12 +26,21 @@ public class ChatRoomRepository : Repository<ChatRoom>
     {
         throw new NotImplementedException();
     }
+    
+    public List<ChatRoom> LoadByUserId(Guid userId)
+    {
+        var filter = Builders<ChatRoom>.Filter.AnyIn(
+            room => room.Participants,
+            new[] { userId });
+        
+        return Collection.FindSync(filter).ToList();
+    }
 
     public override void Update(ChatRoom obj)
     {
         var update = Builders<ChatRoom>.Update
                 .Set("Name", obj.Name)
-                .Set("Participants", obj.Members);
+                .Set("Participants", obj.Participants);
         Collection.UpdateOne(room => room.Equals(obj), update);
     }
 
