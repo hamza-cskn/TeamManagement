@@ -110,7 +110,7 @@ function CreateForm({backupData}) {
                     </div>
                     <div className="sm:col-span-1">
                         <label form="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                            Temporary Password <span className="text-red-300">*</span>
+                            Password <span className="text-red-300">*</span>
                         </label>
                         <input type="text" name="password" id="password"
                                className="focus:outline-none bg-red-50 border border-gray-300 text-gray-900 text-sm rounded-lg

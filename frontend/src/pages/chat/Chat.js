@@ -90,12 +90,12 @@ export function Chat() {
 function ChatList({setMsgList}) {
     const [currentChat, setCurrentChat] = useState("1"); //TODO: get from local storage
     const chatList = [
-        {id: "1", name: "Hamza COŞKUN", messages: "Hello, how are you?"},
-        {id: "2", name: "Çağatay EREM", messages: "test"},
-        {id: "3", name: "Aziz AYDIN", messages: "i need my tea. i will not work until we have tea in the office."},
-        {id: "4", name: "Enes YAPMAZ", messages: "i checked fast api. it is not related with it."},
-        {id: "5", name: "Ahmet KESKIN", messages: "❤️"},
-        {id: "6", name: "Sefa AKDAŞ", messages: "we have to fix the issue immediately. but let me finish my tea first."},
+        {id: "1", name: "Hamza C.", messages: "Hello, how are you?"},
+        {id: "2", name: "Çağatay E.", messages: "test"},
+        {id: "3", name: "Aziz A.", messages: "i need my tea. i will not work until we have tea in the office."},
+        {id: "4", name: "Enes Y.", messages: "i checked fast api. it is not related with it."},
+        {id: "5", name: "Ahmet K.", messages: "❤️"},
+        {id: "6", name: "Sefa A.", messages: "we have to fix the issue immediately. but let me finish my tea first."},
         {id: "7", name: "Test0", messages: "test"},
         {id: "8", name: "Test1", messages: "test"},
         {id: "9", name: "Test2", messages: "test"},
