@@ -6,10 +6,12 @@ namespace backend.Repositories;
 
 public class ChatMessageRepository : Repository<ChatMessage>
 {
+    private readonly ChatRoomRepository _chatRoomRepository;
     public ChatMessageRepository(MongoClient mongoClient,
         ILogger<Repository<ChatMessage>> logger,
-        IConfiguration configuration) : base(mongoClient, logger, configuration)
+        IConfiguration configuration, ChatRoomRepository chatRoomRepository) : base(mongoClient, logger, configuration)
     {
+        _chatRoomRepository = chatRoomRepository;
     }
 
     protected override string GetRepositoryName()
@@ -25,6 +27,13 @@ public class ChatMessageRepository : Repository<ChatMessage>
     public override void Update(IEnumerable<ChatMessage> objs)
     {
         throw new NotImplementedException();
+    }
+    
+    public new void Insert(ChatMessage obj)
+    {
+        if (!_chatRoomRepository.Exists(obj.RoomId))
+            throw new ArgumentException("Room does not exist."); //todo cache would be perfect.
+        Collection.InsertOne(obj);
     }
 
     public override void Update(ChatMessage obj)
