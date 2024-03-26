@@ -9,11 +9,12 @@ public class ChatRoom : Identifiable
     
     public ChatRoom() {}
     
-    public ChatRoom(string name, List<Guid> participants)
+    public ChatRoom(string name, ChatType type, List<Guid> participants)
     {
         Id = Guid.NewGuid();
         Name = name;
         Participants = participants;
+        Type = type;
     }
 }
 
