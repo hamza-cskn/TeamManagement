@@ -3,6 +3,7 @@ using backend.Chat;
 using backend.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OneOf;
 
 namespace backend.Controllers;
 
@@ -25,9 +26,17 @@ public class ChatController : ControllerBase
     [HttpPost]
     public IActionResult CreateRoom(CreateRoomDto createRoomDto)
     {
-        var room = new ChatRoom(createRoomDto.Name, createRoomDto.Participants);
+        var header = Request.Headers.Authorization.ToString();
+        var result = GetUserIdOfRequest(header);
+        if (result.TryPickT0(out var badResponse, out var id))
+            return badResponse;
+        
+        if (!createRoomDto.Participants.Contains(Guid.Parse(id)))
+            return Unauthorized(new { message = "You cannot create a room without yourself." });
+        
+        var room = new ChatRoom(createRoomDto.Name, createRoomDto.Type, createRoomDto.Participants);
         _repository.Insert(room);
-        return Ok(new{roomId=room.Id});
+        return Ok(new{room=room});
     }
     
     [Authorize]
@@ -37,7 +46,7 @@ public class ChatController : ControllerBase
         if (userId == null)
             return BadRequest(new { message = "userId needed in parameter options to fetch rooms." });
         var header = Request.Headers.Authorization.ToString();
-        var badResponse = VerifyUser(header, userId.Value.ToString());
+        var badResponse = VerifyUser(header, userId.Value);
         if (badResponse != null)
             return badResponse;
 
@@ -45,7 +54,7 @@ public class ChatController : ControllerBase
         return Ok(new{chatRooms=rooms});
     }
 
-    private IActionResult? VerifyUser(string header, string userId)
+    private OneOf<IActionResult, string> GetUserIdOfRequest(string header)
     {
         if (header.Length == 0)
             return BadRequest(new { message = "No token found." });
@@ -60,8 +69,16 @@ public class ChatController : ControllerBase
         var id = _authService.GetClaimValue(parts[1], "id");
         if (id == null)
             return BadRequest(new { message = "Id could not find in token or token was invalid." });
+        return id;
+    }
+    
+    private IActionResult? VerifyUser(string header, Guid userId)
+    {
+        var result = GetUserIdOfRequest(header);
+        if (result.TryPickT1(out var id, out var badResponse))
+            return badResponse;
         
-        if (!id.Equals(userId))
+        if (!id.Equals(userId.ToString()))
             return Unauthorized(new { message = "You cannot fetch chat rooms of others." });
         
         return null;
