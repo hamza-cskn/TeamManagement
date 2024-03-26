@@ -6,17 +6,15 @@ namespace backend.Controllers;
 
 [ApiController]
 [Route("chat")]
-public class ChatController : ControllerBase
+public class ChatMessageController : ControllerBase
 {
     private readonly ILogger<AuthController> _logger;
     private readonly ChatMessageRepository _repository;
-    private readonly ChatRoomRepository _authService;
 
-    public ChatController(ILogger<AuthController> logger, ChatMessageRepository repository, ChatRoomRepository authService)
+    public ChatMessageController(ILogger<AuthController> logger, ChatMessageRepository repository, ChatRoomRepository authService)
     {
         _logger = logger;
         _repository = repository;
-        _authService = authService;
     }
     
     [Authorize]
@@ -28,5 +26,4 @@ public class ChatController : ControllerBase
         var messages = _repository.LoadLast(id, (int) count, null, minDate, maxDate);
         return Ok(new{messages=messages});
     }
-
 }
