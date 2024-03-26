@@ -87,4 +87,16 @@ public class AuthService
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SigningKey))
         };
     }
+    
+    public string? GetClaimValue(string token, string type) {
+        var claims = ValidateToken(token);
+        if (claims == null)
+            return null;
+        
+        var claim = claims.Claims.FirstOrDefault(claim => claim.Type == type);
+        if (claim == null)
+            return null;
+
+        return claim.Value;
+    }
 }
