@@ -1,6 +1,6 @@
 import {useNavigate} from "react-router-dom";
 import {useState} from "react";
-import {authorizedFetch} from "../../auth/AuthHandler";
+import {authorizedFetch, saveToken, saveUserId} from "../../auth/AuthHandler";
 
 export function LoginPage() {
     return (<section className="bg-gray-200 dark:bg-gray-900">
@@ -37,7 +37,8 @@ function LoginForm() {
             }
 
             setLoggedIn(true);
-            localStorage.setItem('token', body.token);
+            saveToken(body.token);
+            saveUserId(body.id);
             navigate('/');
         } catch (ex) {
             console.error('Login error:', ex);

@@ -14,6 +14,18 @@ export function isLoggedIn() {
     return getToken() !== null;
 }
 
+export function getUserId() {
+    return localStorage.getItem('userId');
+}
+
+export function saveUserId(userId) {
+    localStorage.setItem('userId', userId);
+}
+
+export function removeUserId() {
+    localStorage.removeItem('userId');
+}
+
 export function authorizedFetch(url, options) {
     const token = getToken();
     if (token) {
