@@ -41,16 +41,17 @@ public class ChatController : ControllerBase
     
     [Authorize]
     [HttpGet]
-    public IActionResult GetRooms(Guid? userId)
+    public IActionResult GetRooms()
     {
-        if (userId == null)
-            return BadRequest(new { message = "userId needed in parameter options to fetch rooms." });
         var header = Request.Headers.Authorization.ToString();
-        var badResponse = VerifyUser(header, userId.Value);
-        if (badResponse != null)
+        var result = GetUserIdOfRequest(header);
+        if (result.TryPickT0(out var badResponse, out var id))
             return badResponse;
+        
+        if (Guid.TryParse(id, out var guid))
+            return BadRequest(new { message = $"{id} is not a valid GUID." });
 
-        var rooms = _repository.LoadByUserId(userId.Value);
+        var rooms = _repository.LoadByUserId(guid);
         return Ok(new{chatRooms=rooms});
     }
 
@@ -62,7 +63,7 @@ public class ChatController : ControllerBase
         var parts = header.Split(" ");
         if (parts.Length != 2)
             return BadRequest(new { message = "Authorization header invalid." });
-            
+
         if (!parts[0].Equals("Bearer"))
             return BadRequest(new { message = "Authorization header invalid." });
         
@@ -70,18 +71,6 @@ public class ChatController : ControllerBase
         if (id == null)
             return BadRequest(new { message = "Id could not find in token or token was invalid." });
         return id;
-    }
-    
-    private IActionResult? VerifyUser(string header, Guid userId)
-    {
-        var result = GetUserIdOfRequest(header);
-        if (result.TryPickT1(out var id, out var badResponse))
-            return badResponse;
-        
-        if (!id.Equals(userId.ToString()))
-            return Unauthorized(new { message = "You cannot fetch chat rooms of others." });
-        
-        return null;
     }
     
 }
