@@ -34,7 +34,6 @@ function UserCreateArea()
 
 function handleSubmit(e, navigate) {
     e.preventDefault();
-    console.log("submitting...");
     authorizedFetch('http://localhost:5229/auth/register', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -51,7 +50,7 @@ function handleSubmit(e, navigate) {
         })
     }).then(response => {
         if (response.ok) {
-            //navigate('/users');
+            navigate('/users');
         } else {
             throw new Error('Register failed');
         }
