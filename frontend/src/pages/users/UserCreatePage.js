@@ -2,8 +2,12 @@ import {BreadcrumbComponent, FooterComponent, NavbarComponent, Stepper} from "..
 import {useNavigate} from "react-router-dom";
 import {authorizedFetch} from "../../auth/AuthHandler";
 
-const generateTempPassword = () => {
-    return Math.floor(Math.random() * 1e6 + 1e5).toString();
+const generatePassword = () => {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789*!~ %';
+    let result = '';
+    for (let i = 0; i < 13; i++)
+        result += characters.charAt(Math.floor(Math.random() * characters.length));
+    return result;
 }
 
 export function UserCreatePage()
@@ -116,7 +120,7 @@ function CreateForm({backupData}) {
                                className="focus:outline-none bg-red-50 border border-gray-300 text-gray-900 text-sm rounded-lg
                                focus:ring-gray-300 focus:border-gray-300 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600
                                dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                               placeholder="••••••••" required defaultValue={generateTempPassword()}/>
+                               placeholder="••••••••" required defaultValue={generatePassword()}/>
                     </div>
                 </div>
                 <button type="submit"
