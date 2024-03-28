@@ -23,16 +23,15 @@ public class ChatHub : Hub
             await Clients.Caller.SendAsync("MessageError", "Id could not find in token or token was invalid.");
             return;
         }
-
-        Console.WriteLine($"Message sent by {id} to {room}: {message}");
         
-        await Clients.All.SendAsync("ReceiveMessage", message);
-
         if (!Guid.TryParse(room, out var roomIdGuid))
         {
             await Clients.Caller.SendAsync("MessageError", "Room id could not parsed as Guid.");
             return;
         }
+        
+        Console.WriteLine($"Message sent by {id} to {room}: {message}");
+        await Clients.All.SendAsync("ReceiveMessage", new {senderId = id, content = message, roomId = roomIdGuid, time = DateTime.Now});
         
         // todo batch operations.
         _repository.Insert(new ChatMessage(Guid.NewGuid(), roomIdGuid, message, DateTime.Now));
