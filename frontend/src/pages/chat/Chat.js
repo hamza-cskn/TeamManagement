@@ -4,7 +4,7 @@ import {ChatBubble} from "./ChatsPage";
 import "../../App.css";
 import {shortString} from "../issue/IssuePage";
 import {ErrorComponent, LoadingComponent} from "../../auth/FetchStates";
-import {getToken} from "../../auth/AuthHandler";
+import {authorizedFetch, getToken, getUserId} from "../../auth/AuthHandler";
 
 let isConnectionCreated = false;
 
@@ -21,8 +21,17 @@ async function connectHubAsync(setHubConnection, setError) {
         });
 }
 
-function loadMoreMessages(setMsgList, count) {
-    setMsgList([]); //TODO: get from server
+function loadMoreMessages(setMsgList, currentChatId, count) {
+    console.log("currentChatId", currentChatId);
+    authorizedFetch(`http://localhost:5229/chat/${currentChatId}/messages?count=${count}`)
+        .then(async res => {
+            if (!res.ok) {
+                console.error("Could not fetch messages");
+                return;
+            }
+            const data = await res.json();
+            setMsgList((prevState) => data.messages.concat(prevState));
+        });
 }
 
 function listenHub(hubConnection, setMsgList) {
@@ -39,18 +48,17 @@ function listenHub(hubConnection, setMsgList) {
            console.error(msg); //TODO: show error message
         });
     }
-
 }
 
-function sendMsg(hubConnection, text) {
-    hubConnection?.invoke("SendMessage", getToken(), "1", text);
+function sendMsg(hubConnection, currentChatId, text) {
+    hubConnection?.invoke("SendMessage", getToken(), currentChatId, text);
 }
 
-function listenScrollTop(setMsgList, divRef) {
+function listenScrollTop(setMsgList, currentChatId, divRef) { //make them global
     const divElement = divRef.current;
     const handleScroll = () => {
         if (divElement.scrollTop === 0) {
-            loadMoreMessages(setMsgList, 10);
+            loadMoreMessages(setMsgList, currentChatId, 10);
         }
     };
     divElement.addEventListener('scroll', handleScroll);
@@ -62,6 +70,7 @@ export function Chat() {
     const [msgList, setMsgList] = useState([]);
     const [hubConnection, setHubConnection] = useState(undefined);
     const [error, setError] = useState(undefined);
+    const [currentChatId, setCurrentChatId] = useState(undefined); //TODO: get from local storage
 
     useEffect(() => {
         connectHubAsync(setHubConnection, setError);
@@ -76,56 +85,86 @@ export function Chat() {
     return (
             <div>
                 <div className="flex">
-                    <ChatList setMsgList={setMsgList} />
-                    <ChatBox msgList={msgList} user={user}/>
+                    <ChatList setMsgList={setMsgList} currentChatId={currentChatId} setCurrentChatId={setCurrentChatId}/>
+                    <ChatBox msgList={msgList} currentChatId={currentChatId} user={user}/>
                 </div>
                 <div className="w-full text-center">
-                    <InputBox text={text} setText={setText} hubConnection={hubConnection}/>
-                    <SendButton text={text} setText={setText} hubConnection={hubConnection}/>
+                    <InputBox text={text} setText={setText} hubConnection={hubConnection} currentChatId={currentChatId}/>
+                    <SendButton text={text} setText={setText} hubConnection={hubConnection} currentChatId={currentChatId}/>
                 </div>
             </div>
     );
 }
 
-function ChatList({setMsgList}) {
-    const [currentChat, setCurrentChat] = useState("1"); //TODO: get from local storage
-    const chatList = [
-        {id: "1", name: "Hamza C.", messages: "Hello, how are you?"},
-        {id: "2", name: "Çağatay E.", messages: "test"},
-        {id: "3", name: "Aziz A.", messages: "i need my tea. i will not work until we have tea in the office."},
-        {id: "4", name: "Enes Y.", messages: "i checked fast api. it is not related with it."},
-        {id: "5", name: "Ahmet K.", messages: "❤️"},
-        {id: "6", name: "Sefa A.", messages: "we have to fix the issue immediately. but let me finish my tea first."},
-        {id: "7", name: "Test0", messages: "test"},
-        {id: "8", name: "Test1", messages: "test"},
-        {id: "9", name: "Test2", messages: "test"},
-        {id: "10", name: "Test3", messages: "test"},
-        {id: "11", name: "Test4", messages: "test"},
-        {id: "12", name: "Test5", messages: "test"},
-        {id: "13", name: "Test6", messages: "test"},
-        {id: "14", name: "Test7", messages: "test"},
-    ];
+function ChatListArea({setMsgList, currentChatId, setCurrentChatId}) {
+    const [chatList, setChatList] = useState(undefined);
+    const [error, setError] = useState(undefined);
 
-    return <div id="chat-list" style={{height: "65vh"}}
-                 className="w-16 sm:w-1/4 border-b border-gray-100 hidden-scrollbar bg-white">
-            <h2 className="font-bold text-sm sm:text-lg text-gray-600 text-center py-5">Chats</h2>
-            <div className="flow-root overflow-x-hidden">
-                <ul role="list" className="divide-y divide-gray-100 dark:divide-gray-700">
-                    {chatList.map((item, index) => {
-                        return <ChatListNode item={item} setMsgList={setMsgList} currentChat={currentChat} setCurrentChat={setCurrentChat}/>
-                    })}
-                </ul>
-            </div>
+    useEffect(() => {
+        const userId = getUserId();
+        if (userId == null || userId == "undefined") {
+            setError("You are not logged in");
+            return;
+        }
+
+        authorizedFetch(`http://localhost:5229/chat?userId=${userId}`)
+            .then(async res => {
+                if (!res.ok) {
+                    setError("Chat list could not be fetched");
+                    return;
+                }
+                const data = await res.json();
+                let list = [];
+                data.chatRooms.forEach(room => {
+                    list.push({id: room.id, name: room.name, messages: "..."});
+                });
+                setChatList(list);
+            });
+    }, []);
+
+    if (error)
+        return <div className="text-sm text-red-700 text-center font-medium m-2">{error}</div>;
+
+    if (chatList == null)
+        return <h2 className="font-bold text-sm sm:text-lg text-gray-600 text-center py-5">Loading...</h2>
+
+    if (chatList.length === 0)
+        return <div className="py-5">
+            <h2 className="font-medium text-md text-gray-500 text-center">No chat found</h2>
+            <p className="font-medium italic text-sm text-gray-400 text-center py-2">"You look lonely but I can't fix that."</p>
         </div>
+
+    return <ul role="list" className="divide-y divide-gray-100 dark:divide-gray-700">
+            {chatList.map((item, index) => {
+                return <div key={index}>
+                    <ChatListNode item={item} setMsgList={setMsgList} currentChatId={currentChatId}
+                                  setCurrentChatId={setCurrentChatId}/>
+                </div>
+            })}
+        </ul>
+
 }
 
-function ChatListNode({item, setMsgList, currentChat, setCurrentChat}) {
+function ChatList({setMsgList, currentChatId, setCurrentChatId})
+{
+    return <div id="chat-list" style={{height: "65vh"}}
+                className="w-16 sm:w-1/4 border-b border-gray-100 hidden-scrollbar bg-white">
+        <h2 className="font-bold text-sm sm:text-lg text-gray-600 text-center py-5">Chats</h2>
+        <div className="flow-root overflow-x-hidden">
+            <ChatListArea setMsgList={setMsgList} currentChatId={currentChatId} setCurrentChatId={setCurrentChatId}/>
+        </div>
+    </div>
+}
+
+function ChatListNode({item, setMsgList, currentChatId, setCurrentChatId}) {
     return <li
         onClick={() => {
-            setCurrentChat(item.id);
-            loadMoreMessages(setMsgList, 10);
+            console.log("itemid: ", item.id);
+            setCurrentChatId(item.id);
+            setMsgList([]);
+            loadMoreMessages(setMsgList, item.id, 10);
         }}
-        className={`py-2.5 hover:bg-purple-50 hover:cursor-pointer px-5 ` + (currentChat === item.id ? "bg-purple-100" : "")}>
+        className={`py-2.5 hover:bg-purple-50 hover:cursor-pointer px-5 ` + (currentChatId === item.id ? "bg-purple-100" : "")}>
         <div className="flex items-center">
             <div className="flex-shrink-0 mx-auto sm:mx-0">
                 <img className="w-5 h-5 sm:w-8 sm:h-8 rounded-full" src="/docs/images/people/profile.png" alt="Thomas image"/>
@@ -142,9 +181,9 @@ function ChatListNode({item, setMsgList, currentChat, setCurrentChat}) {
     </li>
 }
 
-function ChatBox({msgList, setMsgList, user}) {
+function ChatBox({msgList, setMsgList, currentChatId, user}) {
     const divRef = useRef(null);
-    useEffect(() => listenScrollTop(setMsgList, divRef), [setMsgList]);
+    useEffect(() => listenScrollTop(setMsgList, currentChatId, divRef), [setMsgList, currentChatId]);
 
     return (<div ref={divRef} id="chat-box" style={{height: "65vh"}}
                  className="w-full pb-4 mb-16 hidden-scrollbar
@@ -165,7 +204,7 @@ function ChatBox({msgList, setMsgList, user}) {
     </div>)
 }
 
-function InputBox({text, setText, hubConnection}) {
+function InputBox({text, setText, hubConnection, currentChatId}) {
     return (
         <textarea className="w-1/2 max-w-[760px] bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5
         dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white focus:outline-none focus:ring-0
@@ -178,21 +217,21 @@ function InputBox({text, setText, hubConnection}) {
                   onKeyDown={(e) => {
                       if (e.key === "Enter" && !e.shiftKey && text.trim() !== "") {
                           e.preventDefault();
-                          sendMsg(hubConnection, text);
+                          sendMsg(hubConnection, currentChatId, text);
                           setText("");
                       }
                   }}
         />)
 }
 
-function SendButton({text, setText, hubConnection}) {
+function SendButton({text, setText, hubConnection, currentChatId}) {
     return (
         <button className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300
     font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700
     focus:outline-none dark:focus:ring-blue-800 m-2"
                 onClick={() => {
                         if (text.trim() !== "") {
-                            sendMsg(hubConnection, text);
+                            sendMsg(hubConnection, currentChatId, text);
                             setText("");
                         }}}>
             Send
