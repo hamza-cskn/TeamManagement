@@ -18,8 +18,13 @@ public class UserController : ControllerBase
     [Authorize]
     [HttpGet]
     public IActionResult GetAll()
-    {
-        return Ok(new{users=_repository.LoadAll()});
+    { var result = _repository.LoadAll();
+        var cleanList = result.ConvertAll(user =>
+        {
+            user.Password =  null;
+            return user;
+        });
+        return Ok(new{users=cleanList});
     }
     
     [Authorize]
@@ -28,7 +33,9 @@ public class UserController : ControllerBase
     {
         if (!Guid.TryParse(id, out Guid guid))
             return BadRequest(new {message="Requested url does not represent a valid GUID: " + id});
-        
-        return Ok(new{users=_repository.Load(guid)});
+
+        var result = _repository.Load(guid);
+        result.Password = null;
+        return Ok(new{users=result});
     }
 }
