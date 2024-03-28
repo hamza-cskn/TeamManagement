@@ -5,17 +5,19 @@ import React from "react";
 export function ChatBubble({user, message}) {
     let date = new Date();
     let dateString = date.getHours() + ":" + (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes());
+    if (message == null || message.content == null)
+        return <div>Error occurred. The message is null.</div>;
     return <div className="flex items-start gap-2.5">
         <img className="w-8 h-8 rounded-full" src="/docs/images/people/profile.png" alt="Profile"/>
         <div className="flex flex-col min-w-[160px] leading-1.5 p-4 border-gray-200
-        bg-blue-600 rounded-e-lg rounded-es-lg dark:bg-gray-700">
+         bg-blue-600 rounded-e-lg rounded-es-lg dark:bg-gray-700">
             <div className="flex items-center space-x-2 rtl:space-x-reverse">
                 <span
                     className="text-sm font-semibold text-gray-50 dark:text-white">{user.name.name + " " + user.name.surname}</span>
                 <span className="text-sm font-normal text-gray-100 dark:text-gray-400">{dateString}</span>
             </div>
             <p className="text-sm font-normal py-2.5 text-white dark:text-white break-words">
-                {message.split("\n").map((line) => {
+                {message.content.split("\n").map((line) => {
                     return <div>{line}<br/></div>;
                 })}
             </p>
